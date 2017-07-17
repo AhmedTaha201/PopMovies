@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Pop Movies</string>
+
+    <string name="settings_title">Settings</string>
+
+    <string name="api_key">api_key</string>
+
+
+    <string name="sort_by_title">Sort By</string>
+    <string name="sort_by_key">sort_by</string>
+
+    <string name="popularity_label">Popularity</string>
+    <string name="top_rated_label">Rate</string>
+    <string name="popularity_value">popularity.desc</string>
+    <string name="top_rated_value">vote_average.desc</string>
+
+
+    <string name="moviesList_key">movies_list</string>
+    <string name="moviesList_title">Movies List</string>
+
+    <string name="popular_movies_label">Popular</string>
+    <string name="top_rated_movies_label">Top rated</string>
+    <string name="popular_movies_value">popular</string>
+    <string name="top_rated_movies_value">top_rated</string>
+
+    <string name="poster_desc">Movie Poster</string>
+
+
+</resources>

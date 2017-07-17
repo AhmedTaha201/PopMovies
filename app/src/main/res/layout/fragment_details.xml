@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.me.popmovies.DetailsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/movieTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/movieTitleBackground"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/movieTextViewHeight"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@color/movitTitleText"
+            android:textSize="@dimen/movieTitleTextSize"
+            tools:text="Spider Man : Home Comming" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/smallPadding">
+
+            <ImageView
+                android:minWidth="185dp"
+                android:minHeight="264dp"
+                android:id="@+id/moviePoster"
+                android:layout_width="@dimen/img_original_width"
+                android:layout_height="@dimen/img_original_height"
+                android:layout_marginRight="@dimen/imagetodetail"
+                android:adjustViewBounds="true"
+                tools:src="@drawable/sm" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/movieReleaseDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/smallPadding"
+                    android:layout_marginTop="@dimen/smallPadding"
+                    android:fontFamily="sans-serif"
+                    android:textSize="@dimen/releaseYearText"
+                    tools:text="2017" />
+
+                <TextView
+                    android:id="@+id/movieDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/smallPadding"
+                    android:textSize="@dimen/durationText"
+                    tools:text="129min" />
+
+                <TextView
+                    android:id="@+id/movieRate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/rateColor"
+                    android:textSize="@dimen/storyText"
+                    tools:text="9.5/10" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/movieStory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/smallPadding"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:textSize="@dimen/storyText"
+            tools:text="Following the events of Captain America: Civil War, Peter Parker, with the help of his mentor Tony Stark, tries to balance his life as an ordinary high school student in Queens, New York City, with fighting crime as his superhero alter ego Spider-Man as a new threat, the Vulture, emerges." />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:background="@android:color/darker_gray"
+            android:layout_marginBottom="@dimen/smallPadding"/>
+
+    </LinearLayout>
+
+
+</ScrollView>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="movies_list_labels">
+        <item>@string/popular_movies_label</item>
+        <item>@string/top_rated_movies_label</item>
+    </string-array>
+
+
+    <string-array name="movies_list_values">
+        <item>@string/popular_movies_value</item>
+        <item>@string/top_rated_movies_value</item>
+    </string-array>
+
+
+    <string-array name="sort_by_labels">
+        <item>@string/popularity_label</item>
+        <item>@string/top_rated_label</item>
+    </string-array>
+
+    <string-array name="sort_by_values">
+        <item>@string/popularity_value</item>
+        <item>@string/top_rated_value</item>
+    </string-array>
+
+
+</resources>

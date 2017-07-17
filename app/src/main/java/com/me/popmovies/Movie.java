@@ -1,7 +1,5 @@
 package com.me.popmovies;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -81,11 +79,4 @@ public class Movie implements Serializable {
 
     public String getmReviews() {return this.mReviews;}
 
-    @Override
-    public String toString() {
-
-        String details = (getmTitle() + "&" + getmReleaseDate() + "&" + getmDuration() + "&" + getmRate() + "&" + getmSummary() + "&" + getmImageResourceId());
-        Log.i("Movie.java", details);
-        return details;
-    }
 }

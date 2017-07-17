@@ -4,6 +4,10 @@
     <string name="settings_title">Settings</string>
 
     <string name="api_key">api_key</string>
+    <string name="api_value" translatable="false">290e71fe084404f136f3a3c1d31ee104</string>
+
+    <!-- The key for adding the movie to the intent as extra and then getting it back -->
+    <string name="intent_key">movie</string>
 
 
     <string name="sort_by_title">Sort By</string>

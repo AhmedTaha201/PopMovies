@@ -33,13 +33,13 @@
             android:paddingTop="@dimen/smallPadding">
 
             <ImageView
-                android:minWidth="185dp"
-                android:minHeight="264dp"
                 android:id="@+id/moviePoster"
                 android:layout_width="@dimen/img_original_width"
                 android:layout_height="@dimen/img_original_height"
                 android:layout_marginRight="@dimen/imagetodetail"
                 android:adjustViewBounds="true"
+                android:minHeight="264dp"
+                android:minWidth="185dp"
                 tools:src="@drawable/sm" />
 
             <LinearLayout
@@ -96,10 +96,17 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/smallPadding"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:background="@android:color/darker_gray"
-            android:layout_marginBottom="@dimen/smallPadding"/>
+            android:background="@android:color/darker_gray" />
+
+        <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
+            android:id="@+id/trailers_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView>
 
     </LinearLayout>
 

@@ -19,5 +19,7 @@
     <dimen name="img_original_height">277dp</dimen>
 
     <dimen name="title_min_height">30dp</dimen>
+    
+    <dimen name="trailers_list_item_minHeight">72dp</dimen>
 
 </resources>

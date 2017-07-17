@@ -59,7 +59,7 @@ public class MainFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if(id == R.id.action_settings){
+        if (id == R.id.action_settings) {
             Intent settingIntent = new Intent(getContext(), settingsActivity.class);
             startActivity(settingIntent);
         }
@@ -89,9 +89,9 @@ public class MainFragment extends Fragment {
     }
 
 
-    private void updateData(){
+    private void updateData() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String moviesList = sharedPreferences.getString(getString(R.string.moviesList_key),getString(R.string.popular_movies_value));
+        String moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value));
         String sortTytpe = sharedPreferences.getString(getString(R.string.sort_by_key), getString(R.string.popularity_value));
 
         Log.e(LOG_TAG, "--->   " + moviesList + "   <---");
@@ -102,7 +102,7 @@ public class MainFragment extends Fragment {
         uri.appendQueryParameter(getString(R.string.sort_by_key), sortTytpe)
                 .appendQueryParameter(getString(R.string.api_key), getString(R.string.api_value));
 
-        UrlToQuery =  uri.build().toString();
+        UrlToQuery = uri.build().toString();
 
         Log.e(LOG_TAG, "--->   " + UrlToQuery + "   <---");
 
@@ -111,7 +111,7 @@ public class MainFragment extends Fragment {
     }
 
     // A helper method to be called from OnPostExecute to update the UI with the data from the server
-    private void UpdateUI(final List<Movie> movies){
+    private void UpdateUI(final List<Movie> movies) {
 
         MovieAdapter movieAdapter = new MovieAdapter(getContext(), movies);
 
@@ -129,14 +129,14 @@ public class MainFragment extends Fragment {
                 Toast.makeText(getContext(), movies.get(i).getmTitle(), Toast.LENGTH_SHORT).show();
 
                 Intent detailIntent = new Intent(getContext(), DetailsActivity.class);
-                detailIntent.putExtra(Intent.EXTRA_TEXT, movies.get(i).toString());
+                detailIntent.putExtra(getString(R.string.intent_key), movies.get(i));
                 startActivity(detailIntent);
             }
         });
     }
 
 
-    private class MoviesTask extends AsyncTask<String, Void, List<Movie>>{
+    private class MoviesTask extends AsyncTask<String, Void, List<Movie>> {
 
         @Override
         protected List<Movie> doInBackground(String... strings) {
@@ -157,18 +157,18 @@ public class MainFragment extends Fragment {
     // Some helper methods to handle the query
 
 
-    // Main method making use of all the other he;per methods takes a url and returns a movies list
-    private List<Movie> getMovies(String url){
+    // Main method making use of all the other helper methods takes a url and returns a movies list
+    private List<Movie> getMovies(String url) {
 
         return ExtractMoviesListFromJson(ReadFromStream(MakeHttpUrlConnection(url)));
     }
 
     /* {@link CreateUrl} method handles making a url object from a string url
      */
-    public URL CreateUrl(String url){
+    public URL CreateUrl(String url) {
         URL urlObject = null;
 
-        if (url != null){
+        if (url != null) {
             try {
                 urlObject = new URL(url);
             } catch (MalformedURLException e) {
@@ -180,7 +180,7 @@ public class MainFragment extends Fragment {
     }
 
     //MakeHttpUrlConnection method handles making the url connection using a ur object
-    private InputStream MakeHttpUrlConnection(String url){
+    private InputStream MakeHttpUrlConnection(String url) {
 
 
         InputStream is = null;
@@ -207,9 +207,8 @@ public class MainFragment extends Fragment {
     }
 
 
-
     // ReadFromStream handles reading the stream of data from the connection and return a result string
-    private String ReadFromStream(InputStream inputStream){
+    private String ReadFromStream(InputStream inputStream) {
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -217,7 +216,7 @@ public class MainFragment extends Fragment {
         try {
             String line = bufferedReader.readLine();
 
-            while (line != null && line.length() != 0){
+            while (line != null && line.length() != 0) {
                 stringBuilder.append(line);
                 line = bufferedReader.readLine();
             }
@@ -231,7 +230,7 @@ public class MainFragment extends Fragment {
 
 
     // ExtractMoviesListFromJson method extracts movies information from the JSON respone
-    private List<Movie> ExtractMoviesListFromJson(String jsonResponse){
+    private List<Movie> ExtractMoviesListFromJson(String jsonResponse) {
 
         List<Movie> movies = new ArrayList<Movie>();
 
@@ -242,14 +241,15 @@ public class MainFragment extends Fragment {
         String rate;
         String id;
         String runTime;
+        List<Trailer> trailers;
 
         try {
             JSONObject resultsJsonObject = new JSONObject(jsonResponse);
             JSONArray results = resultsJsonObject.getJSONArray("results");
 
-            for(int i = 0; i < results.length(); i++ ){
+            for (int i = 0; i < results.length(); i++) {
 
-                JSONObject currentMovie  = results.getJSONObject(i);
+                JSONObject currentMovie = results.getJSONObject(i);
 
                 poster = currentMovie.getString("poster_path");
                 poster = poster.replace("\\", "/");
@@ -260,12 +260,19 @@ public class MainFragment extends Fragment {
                 rate = currentMovie.getString("vote_average");
                 id = currentMovie.getString("id");
 
-                runTime = ExtractRuntimeFrommID(id);
+                //Extracting json response for a single movie to get runtime, trailers and reviews
+                //It`s costing a lot ,but ...
+                String jsonResponseString = getMovieDetails(id);
 
-                movies.add(new Movie(title, releaseDate,runTime, rate,summary, poster));
+                //getting runtime
+                runTime = extractRunTimeFromJson(jsonResponseString);
+
+                //getting trailers list
+                trailers = extractTrailersListFromJsonResonse(jsonResponseString);
+
+                movies.add(new Movie(title, releaseDate, runTime, rate, summary, poster, trailers));
 
             }
-
 
 
         } catch (JSONException e) {
@@ -276,23 +283,52 @@ public class MainFragment extends Fragment {
 
     }
 
+    //Helper method to get single movie details from the ID
+    // Runtime, Trailers and Reviews
+    private String getMovieDetails(String id) {
 
-    private String ExtractRuntimeFrommID(String id){
+        String url = "https://api.themoviedb.org/3/movie/" + id + "?api_key=" + getString(R.string.api_value) +
+                "&append_to_response=videos,reviews";
+        Log.d(LOG_TAG, "movie url ==> " + url);
 
+        return ReadFromStream(MakeHttpUrlConnection(url));
+    }
+
+    //Helper method to get movie Runtime from json response -- single movie query with id
+    private String extractRunTimeFromJson(String jsonResponseString) {
         String runTime = "";
-        String Url = "https://api.themoviedb.org/3/movie/" + id + "?api_key=290e71fe084404f136f3a3c1d31ee104";
-
-        String res = ReadFromStream(MakeHttpUrlConnection(Url));
-
-        // Extracting the Runtime String
-
         try {
-            JSONObject resultObject = new JSONObject(res);
-            runTime = resultObject.getString("runtime");
-
+            JSONObject jsonObject = new JSONObject(jsonResponseString);
+            runTime = jsonObject.getString("runtime");
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error with making the JsonObject");
+            e.printStackTrace();
         }
         return runTime;
+    }
+
+    //Helper method to get trailers list from json response -- single movie query with id
+    private List<Trailer> extractTrailersListFromJsonResonse(String jsonResponseString) {
+        List<Trailer> trailersList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponseString);
+            JSONObject videos = jsonObject.getJSONObject("videos");
+            JSONArray trailers = videos.getJSONArray("results");
+
+            for (int i = 0; i < trailers.length(); i++) {
+                JSONObject trailer = (JSONObject) trailers.get(i);
+                String name = trailer.getString("name");
+                String type = trailer.getString("type");
+                String key = trailer.getString("key");
+
+                Trailer newTrailer = new Trailer(name, type, key);
+                trailersList.add(newTrailer);
+
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return trailersList;
     }
 }

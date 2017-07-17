@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -29,23 +30,25 @@ public class DetailsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_details, container, false);
 
-        String[] movieDetails = null;
+        Movie currentMovie = null;
 
         // Getting the intent that started the activity and then getting its data
         Intent detailsIntent = getActivity().getIntent();
 
-        if (detailsIntent != null && detailsIntent.hasExtra(Intent.EXTRA_TEXT)) {
-            movieDetails = detailsIntent.getStringExtra(Intent.EXTRA_TEXT).split("&");
+        //TODO -- Use Android Parcelable instead of Java serializble
+        if (detailsIntent != null && detailsIntent.hasExtra(getString(R.string.intent_key))) {
+            currentMovie = (Movie) detailsIntent.getSerializableExtra(getString(R.string.intent_key));
         }
         // Putting the data in its places
 
+        //Title
         TextView titleTextView = (TextView) rootView.findViewById(R.id.movieTitle);
-        titleTextView.setText(movieDetails[0]);
+        titleTextView.setText(currentMovie.getmTitle());
 
 
         // Setting the text to be only the year instead of the whole date
         final TextView yearTextView = (TextView) rootView.findViewById(R.id.movieReleaseDate);
-        final String date = movieDetails[1];
+        final String date = currentMovie.getmReleaseDate();
         String[] dateElements = date.split("-");
         final String year = dateElements[0];
         yearTextView.setText(year);
@@ -62,22 +65,32 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-
+        //Duration
         TextView durationTextView = (TextView) rootView.findViewById(R.id.movieDuration);
-        String duration = movieDetails[2] + "min";
+        String duration = currentMovie.getmDuration() + "min";
         durationTextView.setText(duration);
 
-
+        //Rate
         TextView rateTextView = (TextView) rootView.findViewById(R.id.movieRate);
-        rateTextView.setText(movieDetails[3]);
+        rateTextView.setText(currentMovie.getmRate());
 
-
+        //Summary
         TextView summaryTextView = (TextView) rootView.findViewById(R.id.movieStory);
-        summaryTextView.setText(movieDetails[4]);
+        summaryTextView.setText(currentMovie.getmSummary());
 
         ImageView posterView = (ImageView) rootView.findViewById(R.id.moviePoster);
-        String imgUrl = "http://image.tmdb.org/t/p/w185" + movieDetails[5];
+        String imgUrl = "http://image.tmdb.org/t/p/w185" + currentMovie.getmImageResourceId();
         Picasso.with(getActivity()).load(imgUrl).into(posterView);
+
+        //Trailers list
+        TrailerAdapter trailerAdapter = new TrailerAdapter(getActivity(), currentMovie.getmTrailers());
+
+        ExpandableHeightListView listView = (ExpandableHeightListView) rootView.findViewById(R.id.trailers_list_view);
+        listView.setAdapter(trailerAdapter);
+
+        // This actually does the magic
+        listView.setExpanded(true);
+
 
 
         return rootView;

@@ -269,7 +269,7 @@ public class MainFragment extends Fragment {
                 runTime = extractRunTimeFromJson(jsonResponseString);
 
                 //getting trailers list
-                trailers = extractTrailersListFromJsonResonse(jsonResponseString);
+                trailers = extractTrailersListFromJsonResponse(jsonResponseString);
 
                 //getting reviews text
                 reviews = extractReviewsFromJsonResponse(jsonResponseString);
@@ -311,7 +311,7 @@ public class MainFragment extends Fragment {
     }
 
     //Helper method to get trailers list from json response -- single movie query with id
-    private List<Trailer> extractTrailersListFromJsonResonse(String jsonResponseString) {
+    private List<Trailer> extractTrailersListFromJsonResponse(String jsonResponseString) {
         List<Trailer> trailersList = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonResponseString);

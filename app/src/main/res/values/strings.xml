@@ -4,7 +4,7 @@
     <string name="settings_title">Settings</string>
 
     <string name="api_key">api_key</string>
-    <string name="api_value" translatable="false">290e71fe084404f136f3a3c1d31ee104</string>
+    <string name="api_value" translatable="false">API_KEY</string>
 
     <!-- The key for adding the movie to the intent as extra and then getting it back -->
     <string name="intent_key">movie</string>
@@ -28,6 +28,12 @@
     <string name="top_rated_movies_value">top_rated</string>
 
     <string name="poster_desc">Movie Poster</string>
+
+    <string name="trailers_label">Trailers</string>
+
+    <string name="reviews_label_plus">Reviews (+)</string>
+    <string name="reviews_label_minus">Reviews (-)</string>
+    <string name="no_reviews">No available reviews</string>
 
 
 </resources>

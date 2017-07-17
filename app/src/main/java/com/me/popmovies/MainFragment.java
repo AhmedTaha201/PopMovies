@@ -242,6 +242,7 @@ public class MainFragment extends Fragment {
         String id;
         String runTime;
         List<Trailer> trailers;
+        String reviews;
 
         try {
             JSONObject resultsJsonObject = new JSONObject(jsonResponse);
@@ -270,7 +271,10 @@ public class MainFragment extends Fragment {
                 //getting trailers list
                 trailers = extractTrailersListFromJsonResonse(jsonResponseString);
 
-                movies.add(new Movie(title, releaseDate, runTime, rate, summary, poster, trailers));
+                //getting reviews text
+                reviews = extractReviewsFromJsonResponse(jsonResponseString);
+
+                movies.add(new Movie(title, releaseDate, runTime, rate, summary, poster, trailers ,reviews));
 
             }
 
@@ -330,5 +334,36 @@ public class MainFragment extends Fragment {
         }
 
         return trailersList;
+    }
+
+    //Helper method to get reviews from the json response and return it as a string
+    private String extractReviewsFromJsonResponse(String jsonResponseString){
+        String reviews = "";
+        StringBuilder builder = new StringBuilder();
+
+        try {
+            JSONObject object = new JSONObject(jsonResponseString);
+            JSONObject reviewsObject = object.getJSONObject("reviews");
+            JSONArray reviewsArray = reviewsObject.getJSONArray("results");
+
+            for (int i =0; i < reviewsArray.length(); i++){
+
+                JSONObject currentReview = (JSONObject) reviewsArray.get(i);
+                builder.append("Author : ");
+                String author = currentReview.getString("author");
+                builder.append(author + "\n");
+                String content = currentReview.getString("content");
+                builder.append(content + "\n \n");
+            }
+            reviews = builder.toString();
+            if (reviews == ""){
+                return getString(R.string.no_reviews);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return reviews;
     }
 }

@@ -31,10 +31,13 @@ public class Movie implements Serializable {
     //Trailer list
     private List<Trailer> mTrailers;
 
+    //Reviews string
+    private String mReviews;
+
 
     // The Constructor
     public Movie(String mTitle, String mReleaseDate, String mDuration,
-                 String mRate, String mSummary, String mImageResourceId, List<Trailer> mTrailers) {
+                 String mRate, String mSummary, String mImageResourceId, List<Trailer> mTrailers, String mReviews) {
         this.mTitle = mTitle;
         this.mReleaseDate = mReleaseDate;
         this.mDuration = mDuration;
@@ -42,6 +45,7 @@ public class Movie implements Serializable {
         this.mSummary = mSummary;
         this.mImageResourceId = mImageResourceId;
         this.mTrailers = mTrailers;
+        this.mReviews = mReviews;
     }
 
 
@@ -74,6 +78,8 @@ public class Movie implements Serializable {
     }
 
     public List<Trailer> getmTrailers() {return this.mTrailers;}
+
+    public String getmReviews() {return this.mReviews;}
 
     @Override
     public String toString() {

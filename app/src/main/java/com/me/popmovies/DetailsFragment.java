@@ -82,15 +82,33 @@ public class DetailsFragment extends Fragment {
         String imgUrl = "http://image.tmdb.org/t/p/w185" + currentMovie.getmImageResourceId();
         Picasso.with(getActivity()).load(imgUrl).into(posterView);
 
+        //Reviews
+        final TextView reviewsTextView = (TextView) rootView.findViewById(R.id.reviews_text_view);
+        reviewsTextView.setText(currentMovie.getmReviews());
+
+        //set the reviews text view to change visibility state when the reviews label isclicked
+        final TextView reviewsLabel = (TextView) rootView.findViewById(R.id.reviews_label);
+        reviewsLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (reviewsTextView.getVisibility() == View.VISIBLE){
+                    reviewsTextView.setVisibility(View.GONE);
+                    reviewsLabel.setText(getString(R.string.reviews_label_plus));
+                }else if (reviewsTextView.getVisibility() == View.GONE) {
+                    reviewsTextView.setVisibility(View.VISIBLE);
+                    reviewsLabel.setText(getString(R.string.reviews_label_minus));
+                }
+            }
+        });
+
+
         //Trailers list
         TrailerAdapter trailerAdapter = new TrailerAdapter(getActivity(), currentMovie.getmTrailers());
 
         ExpandableHeightListView listView = (ExpandableHeightListView) rootView.findViewById(R.id.trailers_list_view);
         listView.setAdapter(trailerAdapter);
-
-        // This actually does the magic
+        // This actually does the magic -- expanding the list
         listView.setExpanded(true);
-
 
 
         return rootView;

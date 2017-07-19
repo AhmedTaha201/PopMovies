@@ -105,7 +105,7 @@ public class MainFragment extends Fragment {
 
     private void updateData() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value));
+        String moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
         String sortTytpe = sharedPreferences.getString(getString(R.string.sort_by_key), getString(R.string.popularity_value));
 
         Log.e(LOG_TAG, "--->   " + moviesList + "   <---");

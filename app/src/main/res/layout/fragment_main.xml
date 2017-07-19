@@ -11,6 +11,18 @@
         android:layout_centerInParent="true"
         />
 
+    <TextView
+        android:text = "No Internet Connection
+Please connect to WIFI or open Mobile Data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/no_internet_no_api"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@android:color/black"
+        android:layout_centerInParent="true"/>
+
     <GridView
         android:id="@+id/gridView"
         android:layout_width="match_parent"

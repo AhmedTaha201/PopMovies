@@ -1,8 +1,11 @@
 package com.me.popmovies;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -71,7 +75,17 @@ public class MainFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if (isOnline()){
         updateData();
+        }else{//not online
+            //getting the progress bar and the no-internet text to show the text and hide the progress bar
+            //when there is no internet connection
+            ProgressBar bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
+            TextView textView = (TextView) getActivity().findViewById(R.id.no_internet_no_api);
+
+            bar.setVisibility(View.GONE);
+            textView.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -378,5 +392,13 @@ public class MainFragment extends Fragment {
         }
 
         return reviews;
+    }
+
+    //Helper method to check if there is internet connection or not
+    public boolean isOnline(){
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+
+        return info != null && info.isConnected();
     }
 }

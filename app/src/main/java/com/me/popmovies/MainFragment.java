@@ -274,7 +274,7 @@ public class MainFragment extends Fragment {
                 //getting reviews text
                 reviews = extractReviewsFromJsonResponse(jsonResponseString);
 
-                movies.add(new Movie(title, releaseDate, runTime, rate, summary, poster, trailers ,reviews));
+                movies.add(new Movie(title, releaseDate, runTime, rate, summary, poster, trailers, reviews));
 
             }
 
@@ -337,7 +337,7 @@ public class MainFragment extends Fragment {
     }
 
     //Helper method to get reviews from the json response and return it as a string
-    private String extractReviewsFromJsonResponse(String jsonResponseString){
+    private String extractReviewsFromJsonResponse(String jsonResponseString) {
         String reviews = "";
         StringBuilder builder = new StringBuilder();
 
@@ -346,7 +346,7 @@ public class MainFragment extends Fragment {
             JSONObject reviewsObject = object.getJSONObject("reviews");
             JSONArray reviewsArray = reviewsObject.getJSONArray("results");
 
-            for (int i =0; i < reviewsArray.length(); i++){
+            for (int i = 0; i < reviewsArray.length(); i++) {
 
                 JSONObject currentReview = (JSONObject) reviewsArray.get(i);
                 builder.append("Author : ");
@@ -356,7 +356,7 @@ public class MainFragment extends Fragment {
                 builder.append(content + "\n \n");
             }
             reviews = builder.toString();
-            if (reviews == ""){
+            if (reviews == "") {
                 return getString(R.string.no_reviews);
             }
 

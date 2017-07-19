@@ -16,7 +16,7 @@
 
 
     <dimen name="img_original_width">185dp</dimen>
-    <dimen name="img_original_height">277dp</dimen>
+    <dimen name="img_original_height">264dp</dimen>
 
     <dimen name="title_min_height">30dp</dimen>
     

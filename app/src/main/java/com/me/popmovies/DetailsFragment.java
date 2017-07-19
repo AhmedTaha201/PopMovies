@@ -2,11 +2,13 @@ package com.me.popmovies;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +29,20 @@ public class DetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        //Hiding the status bar and the action bar
+
+        View decorView = getActivity().getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+
+
+
+        // If the Android version is lower than Jellybean, use this call to hide
+        // the status bar.
+        if (Build.VERSION.SDK_INT < 16) {
+            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_details, container, false);
 
@@ -95,10 +111,10 @@ public class DetailsFragment extends Fragment {
         reviewsLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (reviewsTextView.getVisibility() == View.VISIBLE){
+                if (reviewsTextView.getVisibility() == View.VISIBLE) {
                     reviewsTextView.setVisibility(View.GONE);
                     reviewsLabel.setText(getString(R.string.reviews_label_plus));
-                }else if (reviewsTextView.getVisibility() == View.GONE) {
+                } else if (reviewsTextView.getVisibility() == View.GONE) {
                     reviewsTextView.setVisibility(View.VISIBLE);
                     reviewsLabel.setText(getString(R.string.reviews_label_minus));
                 }

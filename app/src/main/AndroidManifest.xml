@@ -21,6 +21,7 @@
         <activity
             android:name=".DetailsActivity"
             android:label="Movie Details"
+            android:theme="@style/AppTheme_transparent"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".settingsActivity"

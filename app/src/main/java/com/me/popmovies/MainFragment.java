@@ -97,17 +97,26 @@ public class MainFragment extends Fragment {
         Log.e(LOG_TAG, "--->   " + moviesList + "   <---");
         Log.e(LOG_TAG, "--->   " + sortTytpe + "   <---");
 
-        String UrlToQuery = BaseUrl + moviesList + "?";
-        Uri.Builder uri = Uri.parse(UrlToQuery).buildUpon();
-        uri.appendQueryParameter(getString(R.string.sort_by_key), sortTytpe)
-                .appendQueryParameter(getString(R.string.api_key), getString(R.string.api_value));
+        String api_key = getActivity().getString(R.string.api_value);
 
-        UrlToQuery = uri.build().toString();
+        if (api_key.equalsIgnoreCase("API_KEY")) {
+            Toast.makeText(getActivity(), "Insert Your API_KEY in strings.xml", Toast.LENGTH_LONG).show();
+        } else {
 
-        Log.e(LOG_TAG, "--->   " + UrlToQuery + "   <---");
+            String UrlToQuery = BaseUrl + moviesList + "?";
+            Uri.Builder uri = Uri.parse(UrlToQuery).buildUpon();
+            uri.appendQueryParameter(getString(R.string.sort_by_key), sortTytpe)
+                    .appendQueryParameter(getString(R.string.api_key), getString(R.string.api_value));
+
+            UrlToQuery = uri.build().toString();
+
+            Log.e(LOG_TAG, "--->   " + UrlToQuery + "   <---");
 
 
-        new MoviesTask().execute(UrlToQuery);
+            new MoviesTask().execute(UrlToQuery);
+
+
+        }
     }
 
     // A helper method to be called from OnPostExecute to update the UI with the data from the server

@@ -18,6 +18,9 @@
     <dimen name="img_original_width">185dp</dimen>
     <dimen name="img_original_height">264dp</dimen>
 
+    <dimen name="back_poster_original_width">185dp</dimen>
+    <dimen name="back_poster_original_height">104dp</dimen>
+
     <dimen name="title_min_height">30dp</dimen>
     
     <dimen name="trailers_list_item_minHeight">72dp</dimen>

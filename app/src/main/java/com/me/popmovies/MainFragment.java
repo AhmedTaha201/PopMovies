@@ -250,6 +250,7 @@ public class MainFragment extends Fragment {
         String rate;
         String id;
         String runTime;
+        String backPoster;
         List<Trailer> trailers;
         String reviews;
 
@@ -263,6 +264,9 @@ public class MainFragment extends Fragment {
 
                 poster = currentMovie.getString("poster_path");
                 poster = poster.replace("\\", "/");
+
+                backPoster = currentMovie.getString("backdrop_path");
+                backPoster = backPoster.replace("\\", "/");
 
                 summary = currentMovie.getString("overview");
                 releaseDate = currentMovie.getString("release_date");
@@ -283,7 +287,7 @@ public class MainFragment extends Fragment {
                 //getting reviews text
                 reviews = extractReviewsFromJsonResponse(jsonResponseString);
 
-                movies.add(new Movie(title, releaseDate, runTime, rate, summary, poster, trailers, reviews));
+                movies.add(new Movie(title, releaseDate, runTime, rate, summary, poster, backPoster, trailers, reviews));
 
             }
 

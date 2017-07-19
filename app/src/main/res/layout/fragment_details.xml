@@ -13,6 +13,16 @@
         android:orientation="vertical"
         android:weightSum="1">
 
+        <ImageView
+            android:id="@+id/back_poster"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:minHeight="@dimen/back_poster_original_height"
+            android:minWidth="@dimen/back_poster_original_width"
+            tools:src="@drawable/sm_back" />
+
+
         <TextView
             android:id="@+id/movieTitle"
             android:layout_width="match_parent"

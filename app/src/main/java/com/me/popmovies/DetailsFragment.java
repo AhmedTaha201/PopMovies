@@ -35,7 +35,7 @@ public class DetailsFragment extends Fragment {
         // Getting the intent that started the activity and then getting its data
         Intent detailsIntent = getActivity().getIntent();
 
-        //TODO -- Use Android Parcelable instead of Java serializble
+        //TODO -- Use Android Parcelable instead of Java serializable
         if (detailsIntent != null && detailsIntent.hasExtra(getString(R.string.intent_key))) {
             currentMovie = (Movie) detailsIntent.getSerializableExtra(getString(R.string.intent_key));
         }
@@ -81,6 +81,10 @@ public class DetailsFragment extends Fragment {
         ImageView posterView = (ImageView) rootView.findViewById(R.id.moviePoster);
         String imgUrl = "http://image.tmdb.org/t/p/w185" + currentMovie.getmImageResourceId();
         Picasso.with(getActivity()).load(imgUrl).into(posterView);
+
+        ImageView back_poster = (ImageView) rootView.findViewById(R.id.back_poster);
+        imgUrl = "http://image.tmdb.org/t/p/w342" + currentMovie.getmBackDropResourceId();
+        Picasso.with(getActivity()).load(imgUrl).into(back_poster);
 
         //Reviews
         final TextView reviewsTextView = (TextView) rootView.findViewById(R.id.reviews_text_view);

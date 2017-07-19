@@ -26,6 +26,9 @@ public class Movie implements Serializable {
     // The Id of the poster of the image that came from the server
     private String mImageResourceId;
 
+    //The id of the backdrop that came from the server
+    private String mBackDropResourceId;
+
     //Trailer list
     private List<Trailer> mTrailers;
 
@@ -35,13 +38,14 @@ public class Movie implements Serializable {
 
     // The Constructor
     public Movie(String mTitle, String mReleaseDate, String mDuration,
-                 String mRate, String mSummary, String mImageResourceId, List<Trailer> mTrailers, String mReviews) {
+                 String mRate, String mSummary, String mImageResourceId,String mBackDropResourceId, List<Trailer> mTrailers, String mReviews) {
         this.mTitle = mTitle;
         this.mReleaseDate = mReleaseDate;
         this.mDuration = mDuration;
         this.mRate = mRate;
         this.mSummary = mSummary;
         this.mImageResourceId = mImageResourceId;
+        this.mBackDropResourceId = mBackDropResourceId;
         this.mTrailers = mTrailers;
         this.mReviews = mReviews;
     }
@@ -79,4 +83,5 @@ public class Movie implements Serializable {
 
     public String getmReviews() {return this.mReviews;}
 
+    public String getmBackDropResourceId() {return this.mBackDropResourceId;}
 }

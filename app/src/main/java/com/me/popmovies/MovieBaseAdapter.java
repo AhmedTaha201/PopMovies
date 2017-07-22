@@ -13,18 +13,21 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class MovieAdapter extends BaseAdapter {
+public class MovieBaseAdapter extends BaseAdapter {
     private Context mContext;
 
     private List<Movie> mlistOfMovies;
 
-    public MovieAdapter(Context c, List<Movie> listOfMovies) {
+    public MovieBaseAdapter(Context c, List<Movie> listOfMovies) {
         mContext = c;
         mlistOfMovies = listOfMovies;
     }
 
     public int getCount() {
-        return mlistOfMovies.size();
+        if (mlistOfMovies != null) {
+            return mlistOfMovies.size();
+        }
+        return 0;
     }
 
     public Object getItem(int position) {
@@ -48,7 +51,7 @@ public class MovieAdapter extends BaseAdapter {
 
         ImageView imageView = (ImageView) gridItemView.findViewById(R.id.poster_view);
         String imgUrl = "http://image.tmdb.org/t/p/w185" + currentMovie.getmImageResourceId();
-        Log.i("MovieAdapter.java", "Url  ---->  " + imgUrl);
+        Log.i("MovieBaseAdapter.java", "Url  ---->  " + imgUrl);
         Picasso.with(mContext).load(imgUrl)
                 .placeholder(R.color.movie_poster_place_holder)
                 .into(imageView);
@@ -60,5 +63,13 @@ public class MovieAdapter extends BaseAdapter {
 
         return gridItemView;
     }
+
+    public void updateAdapter(List<Movie> mlistOfMovies) {
+        this.mlistOfMovies = mlistOfMovies;
+
+        //and call notifyDataSetChanged
+        notifyDataSetChanged();
+    }
+
 
 }

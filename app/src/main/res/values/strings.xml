@@ -4,7 +4,7 @@
     <string name="settings_title">Settings</string>
 
     <string name="api_key">api_key</string>
-    <string name="api_value" translatable="false">API_KEY</string>
+    <string name="api_value" translatable="false">290e71fe084404f136f3a3c1d31ee104</string>
 
     <!-- The key for adding the movie to the intent as extra and then getting it back -->
     <string name="intent_key">movie</string>
@@ -23,14 +23,22 @@
     <string name="moviesList_title">Movies List</string>
 
     <string name="popular_movies_label">Popular</string>
-    <string name="top_rated_movies_label">Top rated</string>
     <string name="popular_movies_value">popular</string>
+    <string name="top_rated_movies_label">Top rated</string>
     <string name="top_rated_movies_value">top_rated</string>
+    <string name="fav_movies_label">Favourites</string>
+    <string name="fav_movies_value">fav_movies</string>
     <string name="now_playing_movies_label">Now Playing</string>
     <string name="now_playing_movies_value">now_playing</string>
     <string name="upcoming_movies_label">Upcoming</string>
     <string name="upcoming_movies_value">upcoming</string>
 
+
+    <!-- error cases text -->
+    <string name="no_internet_text">No Internet Connection \n Please connect to WIFI or open Mobile Data \n Or you can view your favourite movies</string>
+
+    <string name="no_api">No API KEY \n Please add your key in strings.xml</string>
+    <string name="no_favourites">Add favourite movies to appear here</string>
 
     <string name="poster_desc">Movie Poster</string>
 

@@ -16,7 +16,7 @@
 Please connect to WIFI or open Mobile Data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/no_internet_no_api"
+        android:id="@+id/no_internet_no_api_no_fav"
         android:gravity="center"
         android:visibility="gone"
         android:textAppearance="?android:textAppearanceMedium"

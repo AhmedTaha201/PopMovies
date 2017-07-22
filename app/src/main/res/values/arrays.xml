@@ -3,6 +3,7 @@
     <string-array name="movies_list_labels">
         <item>@string/popular_movies_label</item>
         <item>@string/top_rated_movies_label</item>
+        <item>@string/fav_movies_label</item>
         <item>@string/now_playing_movies_label</item>
         <item>@string/upcoming_movies_label</item>
     </string-array>
@@ -11,6 +12,7 @@
     <string-array name="movies_list_values">
         <item>@string/popular_movies_value</item>
         <item>@string/top_rated_movies_value</item>
+        <item>@string/fav_movies_value</item>
         <item>@string/now_playing_movies_value</item>
         <item>@string/upcoming_movies_value</item>
     </string-array>

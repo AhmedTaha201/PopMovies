@@ -11,6 +11,9 @@ public class Movie implements Serializable {
     // The Title of the Movie
     private String mTitle;
 
+    //The id of the movie from the API
+    private String mMovieID;
+
     // Release Date of the Movie
     private String mReleaseDate;
 
@@ -37,9 +40,10 @@ public class Movie implements Serializable {
 
 
     // The Constructor
-    public Movie(String mTitle, String mReleaseDate, String mDuration,
+    public Movie(String mTitle,String mMovieID, String mReleaseDate, String mDuration,
                  String mRate, String mSummary, String mImageResourceId,String mBackDropResourceId, List<Trailer> mTrailers, String mReviews) {
         this.mTitle = mTitle;
+        this.mMovieID = mMovieID;
         this.mReleaseDate = mReleaseDate;
         this.mDuration = mDuration;
         this.mRate = mRate;
@@ -58,6 +62,8 @@ public class Movie implements Serializable {
     public String getmTitle() {
         return mTitle;
     }
+
+    public String getmMovieID() {return this.mMovieID;}
 
     public String getmReleaseDate() {
         return mReleaseDate;

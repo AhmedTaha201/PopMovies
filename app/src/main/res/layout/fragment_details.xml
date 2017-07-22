@@ -23,6 +23,13 @@
             tools:src="@drawable/sm_back" />
 
 
+        <Button
+            android:id="@+id/button"
+            android:textColor="@android:color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fav" />
+
         <TextView
             android:id="@+id/movieTitle"
             android:layout_width="match_parent"

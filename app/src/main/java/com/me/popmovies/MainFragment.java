@@ -4,6 +4,8 @@ package com.me.popmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -23,6 +25,9 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.me.popmovies.data.MoviesContract;
+import com.me.popmovies.data.MoviesDBHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +54,18 @@ public class MainFragment extends Fragment {
 
     final String BaseUrl = "https://api.themoviedb.org/3/movie/";
 
+    ProgressBar bar;
+
+    TextView textView;
+
+    MoviesDBHelper dbHelper;
+    SQLiteDatabase db;
+
+    String moviesList;
+
+    SharedPreferences sharedPreferences;
+
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -74,19 +91,44 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onStart() {
+        dbHelper = new MoviesDBHelper(getActivity());
+        db = dbHelper.getReadableDatabase();
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
+
         super.onStart();
-        if (isOnline()){
         updateData();
-        }else{//not online
-            //getting the progress bar and the no-internet text to show the text and hide the progress bar
-            //when there is no internet connection
-            ProgressBar bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
-            TextView textView = (TextView) getActivity().findViewById(R.id.no_internet_no_api);
 
-            bar.setVisibility(View.GONE);
-            textView.setVisibility(View.VISIBLE);
+    }
+
+    //Helper method to show erreo hints like no connection or no fav. movies
+    //case id is the number matching the case (0 is no connection, 1 is no API_KEY and 2 is no favourited movies
+    public static final int NO_INTENET_ID = 0;
+    public static final int NO_API_ID = 1;
+    public static final int NO_FAV_ID = 2;
+
+    public void showHint(int caseID) {
+        //getting the progress bar and the no-internet text to show the text and hide the progress bar
+        //when there is no internet connection
+
+        bar.setVisibility(View.GONE);
+        textView.setVisibility(View.VISIBLE);
+
+        switch (caseID) {
+            case NO_INTENET_ID:
+                textView.setText(getString(R.string.no_internet_text));
+                break;
+            case NO_API_ID:
+                textView.setText(getString(R.string.no_api));
+                break;
+            case NO_FAV_ID:
+                textView.setText(getString(R.string.no_favourites));
+                break;
+            default:
+                textView.setText("");
+                break;
         }
-
     }
 
     @Override
@@ -97,6 +139,8 @@ public class MainFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        bar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+        textView = (TextView) rootView.findViewById(R.id.no_internet_no_api_no_fav);
 
         // Inflate the layout for this fragment
         return rootView;
@@ -104,8 +148,10 @@ public class MainFragment extends Fragment {
 
 
     private void updateData() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
+
+        GridView gridView = (GridView) getActivity().findViewById(R.id.gridView);
+
+        moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
         String sortTytpe = sharedPreferences.getString(getString(R.string.sort_by_key), getString(R.string.popularity_value));
 
         Log.e(LOG_TAG, "--->   " + moviesList + "   <---");
@@ -114,8 +160,79 @@ public class MainFragment extends Fragment {
         String api_key = getActivity().getString(R.string.api_value);
 
         if (api_key.equalsIgnoreCase("API_KEY")) {
-            Toast.makeText(getActivity(), "Insert Your API_KEY in strings.xml", Toast.LENGTH_LONG).show();
-        } else {
+            showHint(NO_API_ID);
+
+        } else if (!isOnline(getActivity()) && !moviesList.equalsIgnoreCase(getString(R.string.fav_movies_value))) {
+            clearAdapter(NO_INTENET_ID);
+
+        } else if (moviesList.equalsIgnoreCase(getString(R.string.fav_movies_value))) {
+            //getting the base adapter to clear it for
+
+            /* If we went from Favourite to Now Playing as an example, the adapter won`t cast into Baseadapter
+                because it`s a cursor adapter and there would be an error
+                 */
+            clearAdapter(-1);
+
+            final Cursor fav_movies_cursor = db.query(MoviesContract.TABLE_NAME, null, null, null, null, null, null);
+
+            if (fav_movies_cursor.getCount() == 0) {//Empty cursor - No favourites
+                showHint(NO_FAV_ID);
+            } else {// there is some favourited movies
+                showHint(-1); // To show an empty string instead of a warning
+
+                MovieCursorAdapter movieAdapter = new MovieCursorAdapter(getActivity());
+                movieAdapter.swapCursor(fav_movies_cursor);
+
+                gridView = (GridView) getActivity().findViewById(R.id.gridView);
+
+                gridView.setAdapter(movieAdapter);
+
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        /*
+                        When there is no internet connection we would only read the data from the database and pass
+                        it as a Movie object, but if there is internet connection we load the rest of the data
+                         */
+                        //Getting the data of the clicked movie and putting it in a movie object to send with the intent
+                        Movie currentMovie = null;
+                        if (fav_movies_cursor.moveToPosition(i)) {
+                            currentMovie = new Movie(
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_TITLE)),
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_MOVIE_ID)),
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_YEAR)),
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_DURATION)),
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_RATE)),
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_OVERVIEW)),
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_POSTER_ID)),
+                                    null,
+                                    null,
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_REVIEWS)));
+                        }
+                        if (currentMovie != null) {
+                            Intent detailIntent = new Intent(getContext(), DetailsActivity.class);
+                            detailIntent.putExtra(getString(R.string.intent_key), currentMovie);
+                            startActivity(detailIntent);
+                        }
+
+                    }
+                });
+
+            }
+        } else if (isOnline(getActivity())) {
+            showHint(-1);
+            //getting the CursorAdapter to clear it for new data
+            if (isListChanged() && moviesList.equalsIgnoreCase(getString(R.string.fav_movies_value))) {
+                /* If we went from Popular to Top Rated as an example, the adapter won`t cast into Cursor adapter
+                because it`s a base adapter and there would be an error
+                 */
+                clearAdapter(-1);
+            }
+
+            //Show the progress bar and prepare for the data
+            clearAdapter(-1);
+            bar.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.GONE);
 
             String UrlToQuery = BaseUrl + moviesList + "?";
             Uri.Builder uri = Uri.parse(UrlToQuery).buildUpon();
@@ -136,7 +253,7 @@ public class MainFragment extends Fragment {
     // A helper method to be called from OnPostExecute to update the UI with the data from the server
     private void UpdateUI(final List<Movie> movies) {
 
-        MovieAdapter movieAdapter = new MovieAdapter(getContext(), movies);
+        MovieBaseAdapter movieAdapter = new MovieBaseAdapter(getContext(), movies);
 
         GridView gridView = (GridView) getActivity().findViewById(R.id.gridView);
 
@@ -159,6 +276,7 @@ public class MainFragment extends Fragment {
     }
 
 
+    //An AsyncTask to get all the movies
     private class MoviesTask extends AsyncTask<String, Void, List<Movie>> {
 
         @Override
@@ -188,14 +306,14 @@ public class MainFragment extends Fragment {
 
     /* {@link CreateUrl} method handles making a url object from a string url
      */
-    public URL CreateUrl(String url) {
+    public static URL CreateUrl(String url) {
         URL urlObject = null;
 
         if (url != null) {
             try {
                 urlObject = new URL(url);
             } catch (MalformedURLException e) {
-                Log.e(LOG_TAG, "The url is malformed");
+                e.printStackTrace();
             }
         }
 
@@ -203,7 +321,7 @@ public class MainFragment extends Fragment {
     }
 
     //MakeHttpUrlConnection method handles making the url connection using a ur object
-    private InputStream MakeHttpUrlConnection(String url) {
+    private static InputStream MakeHttpUrlConnection(String url) {
 
 
         InputStream is = null;
@@ -220,7 +338,7 @@ public class MainFragment extends Fragment {
             is = connection.getInputStream();
 
         } catch (ProtocolException e) {
-            Log.e(LOG_TAG, "Error with the request method");
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -231,7 +349,7 @@ public class MainFragment extends Fragment {
 
 
     // ReadFromStream handles reading the stream of data from the connection and return a result string
-    private String ReadFromStream(InputStream inputStream) {
+    private static String ReadFromStream(InputStream inputStream) {
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -244,7 +362,7 @@ public class MainFragment extends Fragment {
                 line = bufferedReader.readLine();
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error with the BufferedReader");
+            e.printStackTrace();
         }
 
         return stringBuilder.toString();
@@ -290,7 +408,7 @@ public class MainFragment extends Fragment {
 
                 //Extracting json response for a single movie to get runtime, trailers and reviews
                 //It`s costing a lot ,but ...
-                String jsonResponseString = getMovieDetails(id);
+                String jsonResponseString = getMovieDetails(getActivity(), id);
 
                 //getting runtime
                 runTime = extractRunTimeFromJson(jsonResponseString);
@@ -301,7 +419,7 @@ public class MainFragment extends Fragment {
                 //getting reviews text
                 reviews = extractReviewsFromJsonResponse(jsonResponseString);
 
-                movies.add(new Movie(title, releaseDate, runTime, rate, summary, poster, backPoster, trailers, reviews));
+                movies.add(new Movie(title, id, releaseDate, runTime, rate, summary, poster, backPoster, trailers, reviews));
 
             }
 
@@ -316,11 +434,11 @@ public class MainFragment extends Fragment {
 
     //Helper method to get single movie details from the ID
     // Runtime, Trailers and Reviews
-    private String getMovieDetails(String id) {
+    public static String getMovieDetails(Context context, String id) {
 
-        String url = "https://api.themoviedb.org/3/movie/" + id + "?api_key=" + getString(R.string.api_value) +
+        String url = "https://api.themoviedb.org/3/movie/" + id + "?api_key=" + context.getResources().getString(R.string.api_value) +
                 "&append_to_response=videos,reviews";
-        Log.d(LOG_TAG, "movie url ==> " + url);
+
 
         return ReadFromStream(MakeHttpUrlConnection(url));
     }
@@ -338,7 +456,7 @@ public class MainFragment extends Fragment {
     }
 
     //Helper method to get trailers list from json response -- single movie query with id
-    private List<Trailer> extractTrailersListFromJsonResponse(String jsonResponseString) {
+    public static List<Trailer> extractTrailersListFromJsonResponse(String jsonResponseString) {
         List<Trailer> trailersList = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonResponseString);
@@ -395,10 +513,53 @@ public class MainFragment extends Fragment {
     }
 
     //Helper method to check if there is internet connection or not
-    public boolean isOnline(){
-        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getActiveNetworkInfo();
 
         return info != null && info.isConnected();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        dbHelper.close();
+    }
+
+    //Helper method to listen for movies preference change
+    public boolean isListChanged() {
+        String newList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
+        if (moviesList.equalsIgnoreCase(newList)) {
+            return true;
+        }
+        return false;
+    }
+
+    //Helper method to clear the adapter to show an empty GridView
+    public void clearAdapter(int caseID) {
+        GridView gridView = (GridView) getActivity().findViewById(R.id.gridView);
+
+        //Show the progress bar and prepare for the data
+        try {
+            MovieBaseAdapter adapter = (MovieBaseAdapter) gridView.getAdapter();
+            if (adapter != null) {
+                adapter.updateAdapter(null);//to clear the grid view for the moment
+            }
+            showHint(caseID);
+        } catch (ClassCastException e) {
+            Log.e(LOG_TAG, "Casting Problem");
+            e.printStackTrace();
+        }
+
+        try {
+            MovieCursorAdapter adapter = (MovieCursorAdapter) gridView.getAdapter();
+            if (adapter != null) {
+                adapter.swapCursor(null);//updating the base adapter with null data to clear the GridView
+            }
+            showHint(caseID);
+        } catch (ClassCastException e) {
+            Log.e(LOG_TAG, "Casting Problem");
+            e.printStackTrace();
+        }
     }
 }

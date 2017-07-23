@@ -26,6 +26,7 @@
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:minHeight="@dimen/title_min_height"
-        android:textAppearance="?android:textAppearanceMedium"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@android:color/white"
         tools:text="Spider Man" />
 </RelativeLayout>

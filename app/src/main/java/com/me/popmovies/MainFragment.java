@@ -65,6 +65,9 @@ public class MainFragment extends Fragment {
 
     SharedPreferences sharedPreferences;
 
+    GridView gridView;
+
+    int position = -1;
 
     public MainFragment() {
         // Required empty public constructor
@@ -99,6 +102,10 @@ public class MainFragment extends Fragment {
 
         super.onStart();
         updateData();
+
+        if(-1 != position){
+            gridView.setSelection(position);
+        }
 
     }
 
@@ -149,7 +156,7 @@ public class MainFragment extends Fragment {
 
     private void updateData() {
 
-        GridView gridView = (GridView) getActivity().findViewById(R.id.gridView);
+        gridView = (GridView) getActivity().findViewById(R.id.gridView);
 
         moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
         String sortTytpe = sharedPreferences.getString(getString(R.string.sort_by_key), getString(R.string.popularity_value));
@@ -561,5 +568,11 @@ public class MainFragment extends Fragment {
             Log.e(LOG_TAG, "Casting Problem");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        position = gridView.getFirstVisiblePosition();
     }
 }

@@ -158,13 +158,18 @@ public class DetailsFragment extends Fragment {
 
         /* Implementing the logic of getting the rest of the favourite movie data -Trailers and backPoster- if we are online
          */
-        if(trailers == null && MainFragment.isOnline(getActivity())){
+        if (trailers == null && MainFragment.isOnline(getActivity())) {
             new SingleMovieTask().execute(id);
         }
 
 
         //Setting the on-click-listener for the fav button
         final Button fav_btn = (Button) rootView.findViewById(R.id.button);
+
+        //Change the colorof the button if it`s one of the favourites
+        if(isFavourite(id)){
+            fav_btn.setTextColor(getResources().getColor(R.color.colorAccent));
+        }
 
         fav_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,12 +182,7 @@ public class DetailsFragment extends Fragment {
                 String selection = MoviesContract.COLUMN_MOVIE_ID + "=?";
                 String[] selectionArgs = new String[]{id};
 
-                //querying for that movie
-                Cursor data = new MoviesDBHelper(getActivity())
-                        .getReadableDatabase()
-                        .query(MoviesContract.TABLE_NAME, null, selection, selectionArgs, null, null, null);
-
-                if (data.moveToFirst() || data.getCount() != 0) {//The movie already exists we need to delete it
+                if (isFavourite(id)) {//The movie already exists we need to delete it
                     int deleted = new MoviesDBHelper(getActivity())
                             .getReadableDatabase()
                             .delete(MoviesContract.TABLE_NAME, selection, selectionArgs);
@@ -216,12 +216,12 @@ public class DetailsFragment extends Fragment {
         return rootView;
     }
 
-    public class SingleMovieTask extends AsyncTask<String, Void, String>{
+    public class SingleMovieTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
             String movieId = params[0];
-            return MainFragment.getMovieDetails(getActivity(),movieId);
+            return MainFragment.getMovieDetails(getActivity(), movieId);
         }
 
         @Override
@@ -251,5 +251,22 @@ public class DetailsFragment extends Fragment {
             }
 
         }
+    }
+
+    //Helper method to check if the movie is alredy in the database
+    public boolean isFavourite(String movieId) {
+
+        String selection = MoviesContract.COLUMN_MOVIE_ID + "=?";
+        String[] selectionArgs = new String[]{movieId};
+
+        //querying for that movie
+        Cursor data = new MoviesDBHelper(getActivity())
+                .getReadableDatabase()
+                .query(MoviesContract.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+
+        if (data.moveToFirst() || data.getCount() != 0) {//The movie already exists
+            return true;
+        }
+        return false;
     }
 }

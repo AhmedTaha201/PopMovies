@@ -288,6 +288,9 @@ public class MainFragment extends Fragment {
                 gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        //getting the clicked item position for restoring it later
+                        position = i;
                         /*
                         When there is no internet connection we would only read the data from the database and pass
                         it as a Movie object, but if there is internet connection we load the rest of the data
@@ -365,6 +368,9 @@ public class MainFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Toast.makeText(getContext(), movies.get(i).getmTitle(), Toast.LENGTH_SHORT).show();
+
+                //getting the clicked item position for restoring it later
+                position = i;
 
                 Intent detailIntent = new Intent(getContext(), DetailsActivity.class);
                 detailIntent.putExtra(getString(R.string.intent_key), movies.get(i));
@@ -665,7 +671,6 @@ public class MainFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        position = gridView.getFirstVisiblePosition();
         if (saveSearchResults) {
             resultAdapter = (BaseAdapter) gridView.getAdapter();
         }

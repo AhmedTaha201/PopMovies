@@ -125,7 +125,7 @@ public class MainFragment extends Fragment {
         moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
 
         super.onStart();
-        if (resultAdapter != null && saveSearchResults == true ) {
+        if (resultAdapter != null && saveSearchResults == true  || resultAdapter != null && !isOnline(getActivity()) ) {
             gridView.setAdapter(resultAdapter);
         } else {
             updateData();
@@ -138,8 +138,16 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onPause() {
+        super.onPause();
+        //We save the adapter anyway , if it`s a serarch we need the data again and if there is no internet connection
+        //we need it temporarily
+        try{
+            resultAdapter = (MovieBaseAdapter) gridView.getAdapter();
+        }catch (ClassCastException e){
+            resultAdapter = (MovieCursorAdapter) gridView.getAdapter();
+        }
+
         //Registering the receiver
         internetReceiver receiver = new internetReceiver();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -679,14 +687,6 @@ public class MainFragment extends Fragment {
         } catch (ClassCastException e) {
             Log.e(LOG_TAG, "Casting Problem");
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (saveSearchResults) {
-            resultAdapter = (BaseAdapter) gridView.getAdapter();
         }
     }
 

@@ -125,7 +125,8 @@ public class MainFragment extends Fragment {
         moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
 
         super.onStart();
-        if (resultAdapter != null && saveSearchResults == true  || resultAdapter != null && !isOnline(getActivity()) ) {
+        if (resultAdapter != null && saveSearchResults == true && !moviesList.equalsIgnoreCase(getString(R.string.fav_movies_value))
+                || resultAdapter != null && !isOnline(getActivity()) && !moviesList.equalsIgnoreCase(getString(R.string.fav_movies_value))) {
             gridView.setAdapter(resultAdapter);
         } else {
             updateData();

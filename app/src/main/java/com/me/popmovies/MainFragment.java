@@ -1,8 +1,10 @@
 package com.me.popmovies;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -48,6 +50,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -131,6 +135,16 @@ public class MainFragment extends Fragment {
             gridView.setSelection(position);
         }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Registering the receiver
+        internetReceiver receiver = new internetReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        getActivity().registerReceiver(receiver, filter);
     }
 
     //Helper method to show erreo hints like no connection or no fav. movies
@@ -673,6 +687,24 @@ public class MainFragment extends Fragment {
         super.onPause();
         if (saveSearchResults) {
             resultAdapter = (BaseAdapter) gridView.getAdapter();
+        }
+    }
+
+    //Broadcast Receiver for listening to the internet connection and if it`s connected we update the data
+    public class internetReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(isOnline(context)) {
+                updateData();
+            }else {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Snackbar.make(getView(), getString(R.string.lost_connection_text), Snackbar.LENGTH_SHORT).show();
+                    }
+                },2000);
+            }
         }
     }
 }

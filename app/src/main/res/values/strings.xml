@@ -52,4 +52,6 @@
     <string name="search_empty_query">Please write something to search for</string>
     <string name="search_text">Searching ...</string>
 
+    <string name="lost_connection_text">Lost Connection !</string>
+
 </resources>

@@ -9,6 +9,8 @@ import android.preference.PreferenceManager;
 
 public class settingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +37,8 @@ public class settingsActivity extends PreferenceActivity implements Preference.O
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
+        MainFragment.saveSearchResults = false;
+
         String stringValue = value.toString();
 
         if (preference instanceof ListPreference) {

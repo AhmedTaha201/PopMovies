@@ -33,7 +33,6 @@
     <string name="upcoming_movies_label">Upcoming</string>
     <string name="upcoming_movies_value">upcoming</string>
 
-
     <!-- error cases text -->
     <string name="no_internet_text">No Internet Connection \n Please connect to WIFI or open Mobile Data \n Or you can view your favourite movies</string>
 
@@ -48,5 +47,9 @@
     <string name="reviews_label_minus">Reviews (-)</string>
     <string name="no_reviews">No available reviews</string>
 
+    <!--Search error messages -->
+    <string name="search_connect_internet">Please connect to the internet</string>
+    <string name="search_empty_query">Please write something to search for</string>
+    <string name="search_text">Searching ...</string>
 
 </resources>

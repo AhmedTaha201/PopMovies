@@ -12,7 +12,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.RecognizerIntent;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,6 +32,7 @@ import android.widget.Toast;
 
 import com.me.popmovies.data.MoviesContract;
 import com.me.popmovies.data.MoviesDBHelper;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +48,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -69,6 +76,14 @@ public class MainFragment extends Fragment {
 
     int position = -1;
 
+    MaterialSearchView searchView = null;
+
+    BaseAdapter resultAdapter = null;
+
+    //public boolean to check if we should return the search results or the popular ,top rated, ... movies
+    //we change it to false in settings activity and true in search submit
+    public static boolean saveSearchResults = false;
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -77,6 +92,11 @@ public class MainFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        if (searchView != null) {
+            searchView.setMenuItem(item);
+        }
     }
 
     @Override
@@ -101,9 +121,13 @@ public class MainFragment extends Fragment {
         moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
 
         super.onStart();
-        updateData();
+        if (resultAdapter != null && saveSearchResults == true ) {
+            gridView.setAdapter(resultAdapter);
+        } else {
+            updateData();
+        }
 
-        if(-1 != position){
+        if (-1 != position) {
             gridView.setSelection(position);
         }
 
@@ -114,6 +138,7 @@ public class MainFragment extends Fragment {
     public static final int NO_INTENET_ID = 0;
     public static final int NO_API_ID = 1;
     public static final int NO_FAV_ID = 2;
+    public static final int SEARCHING_ID = 3;
 
     public void showHint(int caseID) {
         //getting the progress bar and the no-internet text to show the text and hide the progress bar
@@ -132,6 +157,9 @@ public class MainFragment extends Fragment {
             case NO_FAV_ID:
                 textView.setText(getString(R.string.no_favourites));
                 break;
+            case SEARCHING_ID:
+                textView.setText(getString(R.string.search_text));
+                break;
             default:
                 textView.setText("");
                 break;
@@ -144,13 +172,76 @@ public class MainFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         bar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
         textView = (TextView) rootView.findViewById(R.id.no_internet_no_api_no_fav);
 
+        searchView = (MaterialSearchView) rootView.findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query == null || query == "") {
+                    Snackbar.make(rootView, getString(R.string.search_empty_query), Snackbar.LENGTH_SHORT).show();
+                    return true;
+                } else {
+                    if (isOnline(getActivity())) {
+                        clearAdapter(SEARCHING_ID);
+
+                        // Turned into TRUE to savethe results for the back press from the details of a single searched movie
+                        saveSearchResults = true;
+
+                        String searchUrl = "http://api.themoviedb.org/3/search/movie?api_key="
+                                + getString(R.string.api_value)
+                                + "&query=" + query;
+
+                        new MoviesTask().execute(searchUrl);
+                        return false;
+                    } else {
+                        Snackbar.make(rootView, getString(R.string.search_connect_internet), Snackbar.LENGTH_SHORT).show();
+                        return true;
+                    }
+                }
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Do some magic
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
+
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        showHint(-1);
+        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null && matches.size() > 0) {
+                String searchWrd = matches.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+                    searchView.setQuery(searchWrd, false);
+                }
+            }
+
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -359,17 +450,18 @@ public class MainFragment extends Fragment {
     private static String ReadFromStream(InputStream inputStream) {
 
         StringBuilder stringBuilder = new StringBuilder();
+        if (inputStream != null) {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            try {
+                String line = bufferedReader.readLine();
 
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        try {
-            String line = bufferedReader.readLine();
-
-            while (line != null && line.length() != 0) {
-                stringBuilder.append(line);
-                line = bufferedReader.readLine();
+                while (line != null && line.length() != 0) {
+                    stringBuilder.append(line);
+                    line = bufferedReader.readLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         return stringBuilder.toString();
@@ -574,5 +666,8 @@ public class MainFragment extends Fragment {
     public void onPause() {
         super.onPause();
         position = gridView.getFirstVisiblePosition();
+        if (saveSearchResults) {
+            resultAdapter = (BaseAdapter) gridView.getAdapter();
+        }
     }
 }

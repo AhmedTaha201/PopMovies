@@ -32,7 +32,18 @@ Please connect to WIFI or open Mobile Data"
         android:stretchMode="columnWidth"
         tools:context="com.example.android.popmovies.MainFragment" />
 
+    <!-- Must be last for right layering display -->
+    <FrameLayout
+        android:id="@+id/toolbar_container"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 
 
 </RelativeLayout>

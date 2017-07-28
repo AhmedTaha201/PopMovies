@@ -7,11 +7,4 @@
         android:orderInCategory="100"
         android:title="@string/settings_title"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_fav"
-        android:title="Fav."
-        app:showAsAction="always"
-        android:icon="@drawable/ic_favorite_border_black_24dp"
-        />
 </menu>

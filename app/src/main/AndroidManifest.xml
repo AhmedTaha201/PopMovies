@@ -20,7 +20,7 @@
         </activity>
         <activity
             android:name=".DetailsActivity"
-            android:label="Movie Details"
+            android:label=""
             android:theme="@style/AppTheme_transparent"
             android:parentActivityName=".MainActivity" />
         <activity

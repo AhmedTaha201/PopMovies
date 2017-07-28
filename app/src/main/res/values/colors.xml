@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#333333</color>
+    <color name="colorPrimaryDark">#1e1e1e</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorBackground">#282828</color>
+
     <color name="movieTitleBackground">#088F88</color>
-    <color name="movitTitleText">#FFFFFF</color>
-    <color name="rateColor">#000000</color>
+    <color name="movieTitleText">#000000</color>
+    <color name="details">#000000</color>
 
     <color name="movie_poster_place_holder">#FFFFFF</color>
 </resources>

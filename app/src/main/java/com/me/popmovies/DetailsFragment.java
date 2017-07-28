@@ -4,6 +4,7 @@ package com.me.popmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,13 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.me.popmovies.data.MoviesContract;
 import com.me.popmovies.data.MoviesDBHelper;
+import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -112,6 +113,8 @@ public class DetailsFragment extends Fragment {
         //Rate
         TextView rateTextView = (TextView) rootView.findViewById(R.id.movieRate);
         rateTextView.setText(rate);
+        TextView rateTextView1 = (TextView) rootView.findViewById(R.id.movieRate1);
+        rateTextView1.setText(rate);
 
         //Summary
         TextView summaryTextView = (TextView) rootView.findViewById(R.id.movieStory);
@@ -164,14 +167,18 @@ public class DetailsFragment extends Fragment {
 
 
         //Setting the on-click-listener for the fav button
-        final Button fav_btn = (Button) rootView.findViewById(R.id.button);
+        ShineButton shineButton = (ShineButton) rootView.findViewById(R.id.shine_btn);
+        shineButton.setBtnColor(Color.GRAY);
+        shineButton.setBtnFillColor(Color.RED);
+        shineButton.setShapeResource(R.raw.heart);
+        final ShineButton fShineButton = shineButton;
 
         //Change the colorof the button if it`s one of the favourites
-        if(isFavourite(id)){
-            fav_btn.setTextColor(getResources().getColor(R.color.colorAccent));
+        if (isFavourite(id)) {
+            shineButton.setChecked(true);
         }
 
-        fav_btn.setOnClickListener(new View.OnClickListener() {
+        shineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                  /* preparing the movie details in a contentValues object to insert
@@ -187,7 +194,7 @@ public class DetailsFragment extends Fragment {
                             .getReadableDatabase()
                             .delete(MoviesContract.TABLE_NAME, selection, selectionArgs);
                     assert (deleted == 1);
-                    fav_btn.setTextColor(getResources().getColor(R.color.rateColor));
+                    fShineButton.setChecked(false);
                     Snackbar.make(rootView, "Deleted movie from favourites", Snackbar.LENGTH_SHORT).show();
 
                 } else { //The movie isn`t there we need to add it
@@ -208,7 +215,7 @@ public class DetailsFragment extends Fragment {
 
                     assert (addedID != -1);
                     Snackbar.make(rootView, "Added movie to favourites", Snackbar.LENGTH_SHORT).show();
-                    fav_btn.setTextColor(getResources().getColor(R.color.colorAccent));
+                    fShineButton.setChecked(true);
                 }
             }
         });

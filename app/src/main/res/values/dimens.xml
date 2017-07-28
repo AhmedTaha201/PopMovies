@@ -5,18 +5,18 @@
     <dimen name="smallPadding">7dp</dimen>
 
     <dimen name="movieTitleTextSize">45sp</dimen>
-    <dimen name="movieTextViewHeight">100dp</dimen>
+    <dimen name="movieTextViewHeight">50dp</dimen>
 
-    <dimen name="imagetodetail">25dp</dimen>
+    <dimen name="imagetodetail">100dp</dimen>
 
 
     <dimen name="releaseYearText">28sp</dimen>
     <dimen name="durationText">26sp</dimen>
-    <dimen name="storyText">18sp</dimen>
+    <dimen name="details">18sp</dimen>
 
 
-    <dimen name="img_original_width">185dp</dimen>
-    <dimen name="img_original_height">264dp</dimen>
+    <dimen name="img_original_width">92dp</dimen>
+    <dimen name="img_original_height">131dp</dimen>
 
     <dimen name="back_poster_original_width">185dp</dimen>
     <dimen name="back_poster_original_height">104dp</dimen>

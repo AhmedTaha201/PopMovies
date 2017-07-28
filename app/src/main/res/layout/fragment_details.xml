@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/details"
+    style="@style/AppTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.me.popmovies.DetailsActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/back_poster"
@@ -22,33 +22,56 @@
             android:minWidth="@dimen/back_poster_original_width"
             tools:src="@drawable/sm_back" />
 
-
-        <Button
-            android:id="@+id/button"
-            android:textColor="@android:color/black"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
-            android:text="Fav" />
+            android:layout_alignBottom="@id/back_poster"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:background="#77000000"
+            android:minHeight="32dp">
+
+            <TextView
+                android:id="@+id/movieRate1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:gravity="center_vertical"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@android:color/white"
+                tools:text="7.5" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:foregroundGravity="center_vertical"
+                app:srcCompat="@drawable/ic_rate_star" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/movieTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/movieTitleBackground"
+            android:layout_below="@id/back_poster"
+            android:fontFamily="sans-serif-condensed"
             android:gravity="center_vertical"
             android:minHeight="@dimen/movieTextViewHeight"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:textColor="@color/movitTitleText"
-            android:textSize="@dimen/movieTitleTextSize"
-            tools:text="Spider Man : Home Comming" />
-
+            android:textColor="@color/movieTitleText"
+            android:textSize="@dimen/details"
+            tools:text="Spider Man : Home Coming" />
 
         <LinearLayout
+            android:id="@+id/details_snippet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/smallPadding"
-            android:paddingBottom="32dp">
+            android:layout_below="@id/movieTitle"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <android.support.v7.widget.CardView
 
@@ -69,7 +92,7 @@
                     android:adjustViewBounds="true"
                     android:minHeight="@dimen/img_original_height"
                     android:minWidth="@dimen/img_original_width"
-                    tools:src="@drawable/sm" />
+                    tools:src="@drawable/sp" />
 
             </android.support.v7.widget.CardView>
 
@@ -78,54 +101,95 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/movieReleaseDate"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/smallPadding"
-                    android:layout_marginTop="@dimen/smallPadding"
-                    android:fontFamily="sans-serif"
-                    android:textSize="@dimen/releaseYearText"
-                    tools:text="2017" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/movieDuration"
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        app:srcCompat="@drawable/ic_release_date" />
+
+                    <TextView
+                        android:id="@+id/movieReleaseDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/smallPadding"
+                        android:layout_marginTop="@dimen/smallPadding"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/details"
+                        android:textSize="@dimen/details"
+                        tools:text="2017" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/smallPadding"
-                    android:textSize="@dimen/durationText"
-                    tools:text="129min" />
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/movieRate"
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        app:srcCompat="@drawable/ic_duration" />
+
+                    <TextView
+                        android:id="@+id/movieDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/smallPadding"
+                        android:textColor="@color/details"
+                        android:textSize="@dimen/details"
+                        tools:text="129min" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/rateColor"
-                    android:textSize="@dimen/storyText"
-                    tools:text="9.5/10" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        app:srcCompat="@drawable/ic_rate_star" />
+
+
+                    <TextView
+                        android:id="@+id/movieRate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/details"
+                        android:textSize="@dimen/details"
+                        tools:text="7.5/10" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-
         </LinearLayout>
-
 
         <TextView
             android:id="@+id/movieStory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/details_snippet"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/smallPadding"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:textSize="@dimen/storyText"
-            tools:text="Following the events of Captain America: Civil War, Peter Parker, with the help of his mentor Tony Stark, tries to balance his life as an ordinary high school student in Queens, New York City, with fighting crime as his superhero alter ego Spider-Man as a new threat, the Vulture, emerges." />
-
+            android:layout_marginRight="@dimen/activity_horizontal_margin" />
 
         <View
+            android:id="@+id/view1"
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_below="@id/movieStory"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/smallPadding"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -136,6 +200,7 @@
             android:id="@+id/reviews_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/view1"
             android:layout_margin="@dimen/activity_vertical_margin"
             android:text="@string/reviews_label_plus"
             android:textAppearance="?android:textAppearanceMedium"
@@ -145,21 +210,26 @@
             android:id="@+id/reviews_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/reviews_label"
             android:layout_margin="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/smallPadding"
             android:visibility="gone" />
 
         <View
+            android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_below="@id/reviews_text_view"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:background="@android:color/darker_gray" />
 
         <TextView
+            android:id="@+id/trailers_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/view2"
             android:layout_margin="@dimen/activity_vertical_margin"
             android:text="@string/trailers_label"
             android:textAppearance="?android:textAppearanceMedium"
@@ -169,11 +239,22 @@
             android:id="@+id/trailers_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/trailers_label"
             android:padding="@dimen/activity_horizontal_margin">
 
         </com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView>
 
-    </LinearLayout>
+            <com.sackcentury.shinebuttonlib.ShineButton
+                android:id="@+id/shine_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignBottom="@id/back_poster"
+                android:layout_alignRight="@id/back_poster"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin" />
 
+
+    </RelativeLayout>
 
 </ScrollView>

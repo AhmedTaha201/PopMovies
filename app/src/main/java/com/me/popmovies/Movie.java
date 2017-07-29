@@ -23,6 +23,9 @@ public class Movie implements Serializable {
     // The Movie rate
     private String mRate;
 
+    //The movie genre IDs
+    private String[] mGenres;
+
     // The variable with the story outline
     private String mSummary;
 
@@ -41,12 +44,13 @@ public class Movie implements Serializable {
 
     // The Constructor
     public Movie(String mTitle,String mMovieID, String mReleaseDate, String mDuration,
-                 String mRate, String mSummary, String mImageResourceId,String mBackDropResourceId, List<Trailer> mTrailers, String mReviews) {
+                 String mRate,String[] mGenres, String mSummary, String mImageResourceId,String mBackDropResourceId, List<Trailer> mTrailers, String mReviews) {
         this.mTitle = mTitle;
         this.mMovieID = mMovieID;
         this.mReleaseDate = mReleaseDate;
         this.mDuration = mDuration;
         this.mRate = mRate;
+        this.mGenres = mGenres;
         this.mSummary = mSummary;
         this.mImageResourceId = mImageResourceId;
         this.mBackDropResourceId = mBackDropResourceId;
@@ -65,9 +69,7 @@ public class Movie implements Serializable {
 
     public String getmMovieID() {return this.mMovieID;}
 
-    public String getmReleaseDate() {
-        return mReleaseDate;
-    }
+    public String getmReleaseDate() {return mReleaseDate;}
 
     public String getmDuration() {
         return mDuration;
@@ -76,6 +78,8 @@ public class Movie implements Serializable {
     public String getmRate() {
         return mRate;
     }
+
+    public String[] getmGenres() {return this.mGenres;}
 
     public String getmSummary() {
         return mSummary;

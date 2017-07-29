@@ -22,6 +22,8 @@ public class MoviesContract implements BaseColumns {
     public static final String COLUMN_YEAR = "wear";
     //Movie average rate
     public static final String COLUMN_RATE = "rate";
+    //Movie genres
+    public static final String COLUMN_GENRES = "genres";
     //Movie duration in minutes
     public static final String COLUMN_DURATION = "duration";
     //Movie plot summary

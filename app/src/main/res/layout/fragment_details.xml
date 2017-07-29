@@ -58,18 +58,28 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/back_poster"
             android:fontFamily="sans-serif-condensed"
-            android:gravity="center_vertical"
+            android:gravity="bottom"
             android:minHeight="@dimen/movieTextViewHeight"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:textColor="@color/movieTitleText"
             android:textSize="@dimen/details"
             tools:text="Spider Man : Home Coming" />
 
+        <TextView
+            android:id="@+id/genre_text"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/movieTitle"
+            android:textAppearance = "?android:textAppearanceSmall"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            tools:text = "Action, Thriller"/>
+
         <LinearLayout
             android:id="@+id/details_snippet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/movieTitle"
+            android:layout_below="@id/genre_text"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 

@@ -143,9 +143,9 @@ public class MainFragment extends Fragment {
         super.onPause();
         //We save the adapter anyway , if it`s a serarch we need the data again and if there is no internet connection
         //we need it temporarily
-        try{
+        try {
             resultAdapter = (MovieBaseAdapter) gridView.getAdapter();
-        }catch (ClassCastException e){
+        } catch (ClassCastException e) {
             resultAdapter = (MovieCursorAdapter) gridView.getAdapter();
         }
 
@@ -327,6 +327,7 @@ public class MainFragment extends Fragment {
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_YEAR)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_DURATION)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_RATE)),
+                                    null,
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_OVERVIEW)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_POSTER_ID)),
                                     null,
@@ -508,6 +509,7 @@ public class MainFragment extends Fragment {
         String releaseDate;
         String title;
         String rate;
+        String[] genres;
         String id;
         String runTime;
         String backPoster;
@@ -534,6 +536,13 @@ public class MainFragment extends Fragment {
                 rate = currentMovie.getString("vote_average");
                 id = currentMovie.getString("id");
 
+                JSONArray genresArray = currentMovie.getJSONArray("genre_ids");
+                genres = new String[genresArray.length()];
+                for (int j = 0; j < genresArray.length(); j++) {
+                    genres[j] = String.valueOf(genresArray.get(j));
+                }
+
+
                 //Extracting json response for a single movie to get runtime, trailers and reviews
                 //It`s costing a lot ,but ...
                 String jsonResponseString = getMovieDetails(getActivity(), id);
@@ -547,7 +556,7 @@ public class MainFragment extends Fragment {
                 //getting reviews text
                 reviews = extractReviewsFromJsonResponse(jsonResponseString);
 
-                movies.add(new Movie(title, id, releaseDate, runTime, rate, summary, poster, backPoster, trailers, reviews));
+                movies.add(new Movie(title, id, releaseDate, runTime, rate, genres, summary, poster, backPoster, trailers, reviews));
 
             }
 
@@ -692,20 +701,81 @@ public class MainFragment extends Fragment {
     }
 
     //Broadcast Receiver for listening to the internet connection and if it`s connected we update the data
-    public class internetReceiver extends BroadcastReceiver{
+    public class internetReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(isOnline(context)) {
+            if (isOnline(context)) {
                 updateData();
-            }else {
+            } else {
                 new Timer().schedule(new TimerTask() {
                     @Override
-                    public void run() {
+                    public void run() { //Waiting for 2 sec before delivering the bad news
                         Snackbar.make(getView(), getString(R.string.lost_connection_text), Snackbar.LENGTH_SHORT).show();
                     }
-                },2000);
+                }, 2000);
             }
+        }
+    }
+
+    //Helper method to get genres as one formated string
+    public static String getGenreString(String[] genres) {
+        StringBuilder builder = new StringBuilder();
+        if (genres != null) {
+            for (int i = 0; i < genres.length; i++) {
+                int genreID = Integer.parseInt(genres[i]);
+                builder.append(getGenre(genreID));
+                if (i < genres.length - 1) {
+                    builder.append(", ");
+                }
+            }
+        }
+        return builder.toString();
+    }
+
+    //Helper method to get the corresponding genre from the genre id
+    public static String getGenre(int id) {
+        switch (id) {
+            case 28:
+                return "Action";
+            case 12:
+                return "Adventure";
+            case 16:
+                return "Animation";
+            case 35:
+                return "Comedy";
+            case 80:
+                return "Crime";
+            case 99:
+                return "Documentary";
+            case 18:
+                return "Drama";
+            case 10751:
+                return "Family";
+            case 14:
+                return "Fantasy";
+            case 36:
+                return "History";
+            case 27:
+                return "Horror";
+            case 10402:
+                return "Music";
+            case 9648:
+                return "Mystery";
+            case 10749:
+                return "Romance";
+            case 878:
+                return "Science Fiction";
+            case 10770:
+                return "TV Movie";
+            case 53:
+                return "Thriller";
+            case 10752:
+                return "War";
+            case 37:
+                return "Western";
+            default:
+                return "";
         }
     }
 }

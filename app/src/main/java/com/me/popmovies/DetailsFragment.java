@@ -74,6 +74,7 @@ public class DetailsFragment extends Fragment {
         final String date = currentMovie.getmReleaseDate();
         final String duration = currentMovie.getmDuration();
         final String rate = currentMovie.getmRate();
+        final String[] genres = currentMovie.getmGenres();
         final String summary = currentMovie.getmSummary();
         final String imgID = currentMovie.getmImageResourceId();
         String backdrop = currentMovie.getmBackDropResourceId();
@@ -86,6 +87,9 @@ public class DetailsFragment extends Fragment {
         //Title
         TextView titleTextView = (TextView) rootView.findViewById(R.id.movieTitle);
         titleTextView.setText(title);
+
+        TextView genresTextView = (TextView) rootView.findViewById(R.id.genre_text);
+        genresTextView.setText(MainFragment.getGenreString(genres));
 
 
         // Setting the text to be only the year instead of the whole date

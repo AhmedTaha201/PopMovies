@@ -20,6 +20,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
             + MoviesContract.COLUMN_TITLE + " TEXT NOT NULL, "
             + MoviesContract.COLUMN_YEAR + " STRING, "
             + MoviesContract.COLUMN_RATE + " STRING, "
+            + MoviesContract.COLUMN_GENRES + " STRING, "
             + MoviesContract.COLUMN_DURATION + " STRING, "
             + MoviesContract.COLUMN_OVERVIEW + " STRING, "
             + MoviesContract.COLUMN_REVIEWS + " STRING, "

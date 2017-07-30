@@ -74,7 +74,7 @@ public class DetailsFragment extends Fragment {
         final String date = currentMovie.getmReleaseDate();
         final String duration = currentMovie.getmDuration();
         final String rate = currentMovie.getmRate();
-        final String[] genres = currentMovie.getmGenres();
+        final String genres = currentMovie.getmGenres();
         final String summary = currentMovie.getmSummary();
         final String imgID = currentMovie.getmImageResourceId();
         String backdrop = currentMovie.getmBackDropResourceId();
@@ -89,7 +89,7 @@ public class DetailsFragment extends Fragment {
         titleTextView.setText(title);
 
         TextView genresTextView = (TextView) rootView.findViewById(R.id.genre_text);
-        genresTextView.setText(MainFragment.getGenreString(genres));
+        genresTextView.setText(genres);
 
 
         // Setting the text to be only the year instead of the whole date
@@ -112,7 +112,7 @@ public class DetailsFragment extends Fragment {
 
         //Duration
         TextView durationTextView = (TextView) rootView.findViewById(R.id.movieDuration);
-        durationTextView.setText(duration + "min");
+        durationTextView.setText(duration + " min");
 
         //Rate
         TextView rateTextView = (TextView) rootView.findViewById(R.id.movieRate);
@@ -206,6 +206,7 @@ public class DetailsFragment extends Fragment {
                     cv.put(MoviesContract.COLUMN_TITLE, title);
                     cv.put(MoviesContract.COLUMN_YEAR, date);
                     cv.put(MoviesContract.COLUMN_RATE, rate);
+                    cv.put(MoviesContract.COLUMN_GENRES, genres);
                     cv.put(MoviesContract.COLUMN_DURATION, duration);
                     cv.put(MoviesContract.COLUMN_OVERVIEW, summary);
                     cv.put(MoviesContract.COLUMN_REVIEWS, reviews);

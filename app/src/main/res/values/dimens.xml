@@ -24,5 +24,8 @@
     <dimen name="title_min_height">25dp</dimen>
     
     <dimen name="trailers_list_item_minHeight">72dp</dimen>
+    <dimen name="card_view_radius">5dp</dimen>
+    <dimen name="rate_star_dimen">24dp</dimen>
+    <dimen name="movie_card_view_min_height">140dp</dimen>
 
 </resources>

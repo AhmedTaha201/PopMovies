@@ -327,7 +327,7 @@ public class MainFragment extends Fragment {
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_YEAR)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_DURATION)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_RATE)),
-                                    null,
+                                    fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_GENRES)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_OVERVIEW)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_POSTER_ID)),
                                     null,
@@ -509,7 +509,7 @@ public class MainFragment extends Fragment {
         String releaseDate;
         String title;
         String rate;
-        String[] genres;
+        String genres;
         String id;
         String runTime;
         String backPoster;
@@ -537,10 +537,11 @@ public class MainFragment extends Fragment {
                 id = currentMovie.getString("id");
 
                 JSONArray genresArray = currentMovie.getJSONArray("genre_ids");
-                genres = new String[genresArray.length()];
+                String[] genresA = new String[genresArray.length()];
                 for (int j = 0; j < genresArray.length(); j++) {
-                    genres[j] = String.valueOf(genresArray.get(j));
+                    genresA[j] = String.valueOf(genresArray.get(j));
                 }
+                genres = getGenreString(genresA);
 
 
                 //Extracting json response for a single movie to get runtime, trailers and reviews
@@ -724,9 +725,12 @@ public class MainFragment extends Fragment {
         if (genres != null) {
             for (int i = 0; i < genres.length; i++) {
                 int genreID = Integer.parseInt(genres[i]);
-                builder.append(getGenre(genreID));
-                if (i < genres.length - 1) {
-                    builder.append(", ");
+                String genreString = getGenre(genreID);
+                if (!TextUtils.isEmpty(genreString)) {
+                    builder.append(genreString);
+                    if (i < genres.length - 1) {
+                        builder.append(" | ");
+                    }
                 }
             }
         }

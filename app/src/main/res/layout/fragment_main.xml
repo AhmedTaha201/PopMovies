@@ -12,8 +12,7 @@
         />
 
     <TextView
-        android:text = "No Internet Connection
-Please connect to WIFI or open Mobile Data"
+        android:text = "@string/no_internet_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/no_internet_no_api_no_fav"
@@ -23,13 +22,10 @@ Please connect to WIFI or open Mobile Data"
         android:textColor="@android:color/black"
         android:layout_centerInParent="true"/>
 
-    <GridView
-        android:id="@+id/gridView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
         tools:context="com.example.android.popmovies.MainFragment" />
 
     <!-- Must be last for right layering display -->

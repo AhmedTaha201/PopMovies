@@ -36,7 +36,7 @@ dependencies {
     compile 'com.sackcentury:shinebutton:0.1.9'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    // CardView
+    compile 'jp.wasabeef:recyclerview-animators:2.2.3'
     compile 'com.android.support:cardview-v7:25.3.1'
     testCompile 'junit:junit:4.12'
 }

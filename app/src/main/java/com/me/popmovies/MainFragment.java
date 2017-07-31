@@ -17,6 +17,8 @@ import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,12 +27,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.me.popmovies.data.MoviesContract;
 import com.me.popmovies.data.MoviesDBHelper;
@@ -76,13 +74,13 @@ public class MainFragment extends Fragment {
 
     SharedPreferences sharedPreferences;
 
-    GridView gridView;
+    RecyclerView recyclerView;
 
     int position = -1;
 
     MaterialSearchView searchView = null;
 
-    BaseAdapter resultAdapter = null;
+    RecyclerView.Adapter resultAdapter = null;
 
     //public boolean to check if we should return the search results or the popular ,top rated, ... movies
     //we change it to false in settings activity and true in search submit
@@ -118,6 +116,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onStart() {
+        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
         dbHelper = new MoviesDBHelper(getActivity());
         db = dbHelper.getReadableDatabase();
 
@@ -127,13 +126,14 @@ public class MainFragment extends Fragment {
         super.onStart();
         if (resultAdapter != null && saveSearchResults == true && !moviesList.equalsIgnoreCase(getString(R.string.fav_movies_value))
                 || resultAdapter != null && !isOnline(getActivity()) && !moviesList.equalsIgnoreCase(getString(R.string.fav_movies_value))) {
-            gridView.setAdapter(resultAdapter);
+            recyclerView.setAdapter(resultAdapter);
         } else {
             updateData();
         }
 
         if (-1 != position) {
-            gridView.setSelection(position);
+            LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            manager.scrollToPositionWithOffset(position, 50);
         }
 
     }
@@ -144,9 +144,9 @@ public class MainFragment extends Fragment {
         //We save the adapter anyway , if it`s a serarch we need the data again and if there is no internet connection
         //we need it temporarily
         try {
-            resultAdapter = (MovieBaseAdapter) gridView.getAdapter();
-        } catch (ClassCastException e) {
-            resultAdapter = (MovieCursorAdapter) gridView.getAdapter();
+            resultAdapter = (MovieRecyclerAdapter) recyclerView.getAdapter();
+        } catch (Exception e) {
+            resultAdapter = (MovieRecyclerCursorAdapter) recyclerView.getAdapter();
         }
 
         //Registering the receiver
@@ -209,6 +209,7 @@ public class MainFragment extends Fragment {
                     return true;
                 } else {
                     if (isOnline(getActivity())) {
+                        bar.setVisibility(View.GONE);
                         clearAdapter(SEARCHING_ID);
 
                         // Turned into TRUE to savethe results for the back press from the details of a single searched movie
@@ -270,7 +271,7 @@ public class MainFragment extends Fragment {
 
     private void updateData() {
 
-        gridView = (GridView) getActivity().findViewById(R.id.gridView);
+        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
 
         moviesList = sharedPreferences.getString(getString(R.string.moviesList_key), getString(R.string.popular_movies_value)).toLowerCase();
         String sortTytpe = sharedPreferences.getString(getString(R.string.sort_by_key), getString(R.string.popularity_value));
@@ -301,23 +302,21 @@ public class MainFragment extends Fragment {
             } else {// there is some favourited movies
                 showHint(-1); // To show an empty string instead of a warning
 
-                MovieCursorAdapter movieAdapter = new MovieCursorAdapter(getActivity());
+                MovieRecyclerCursorAdapter movieAdapter = new MovieRecyclerCursorAdapter(getActivity(), fav_movies_cursor);
                 movieAdapter.swapCursor(fav_movies_cursor);
 
-                gridView = (GridView) getActivity().findViewById(R.id.gridView);
+                recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
+                recyclerView.setAdapter(movieAdapter);
 
-                gridView.setAdapter(movieAdapter);
-
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                    public void onItemClicked(RecyclerView recyclerView, int i, View v) {
                         //getting the clicked item position for restoring it later
                         position = i;
-                        /*
-                        When there is no internet connection we would only read the data from the database and pass
+
+                        /*When there is no internet connection we would only read the data from the database and pass
                         it as a Movie object, but if there is internet connection we load the rest of the data
-                         */
+                                */
                         //Getting the data of the clicked movie and putting it in a movie object to send with the intent
                         Movie currentMovie = null;
                         if (fav_movies_cursor.moveToPosition(i)) {
@@ -378,21 +377,17 @@ public class MainFragment extends Fragment {
     // A helper method to be called from OnPostExecute to update the UI with the data from the server
     private void UpdateUI(final List<Movie> movies) {
 
-        MovieBaseAdapter movieAdapter = new MovieBaseAdapter(getContext(), movies);
+        MovieRecyclerAdapter movieAdapter = new MovieRecyclerAdapter(getActivity(), movies);
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
 
-        GridView gridView = (GridView) getActivity().findViewById(R.id.gridView);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(mLayoutManager);
 
-        ProgressBar bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
+        recyclerView.setAdapter(movieAdapter);
 
-        gridView.setEmptyView(bar);
-
-        gridView.setAdapter(movieAdapter);
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getContext(), movies.get(i).getmTitle(), Toast.LENGTH_SHORT).show();
-
+            public void onItemClicked(RecyclerView recyclerView, int i, View v) {
                 //getting the clicked item position for restoring it later
                 position = i;
 
@@ -675,11 +670,11 @@ public class MainFragment extends Fragment {
 
     //Helper method to clear the adapter to show an empty GridView
     public void clearAdapter(int caseID) {
-        GridView gridView = (GridView) getActivity().findViewById(R.id.gridView);
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
 
         //Show the progress bar and prepare for the data
         try {
-            MovieBaseAdapter adapter = (MovieBaseAdapter) gridView.getAdapter();
+            MovieRecyclerAdapter adapter = (MovieRecyclerAdapter) recyclerView.getAdapter();
             if (adapter != null) {
                 adapter.updateAdapter(null);//to clear the grid view for the moment
             }
@@ -690,7 +685,7 @@ public class MainFragment extends Fragment {
         }
 
         try {
-            MovieCursorAdapter adapter = (MovieCursorAdapter) gridView.getAdapter();
+            MovieRecyclerCursorAdapter adapter = (MovieRecyclerCursorAdapter) recyclerView.getAdapter();
             if (adapter != null) {
                 adapter.swapCursor(null);//updating the base adapter with null data to clear the GridView
             }

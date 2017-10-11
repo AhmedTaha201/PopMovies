@@ -71,7 +71,7 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<MovieRecyclerAdap
         //rate
         holder.rate.setText(currentMovie.getmRate());
         //rateC
-        holder.rateC.setText("N/A"); /* As a placeHolder for now*/
+        holder.rateC.setText(currentMovie.getmRated()); /* As a placeHolder for now*/
         //duration
         holder.duration.setText(currentMovie.getmDuration() + " min");
 

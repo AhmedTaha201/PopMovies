@@ -21,12 +21,12 @@
         <activity
             android:name=".DetailsActivity"
             android:label=""
-            android:theme="@style/AppTheme_transparent"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme_transparent" />
         <activity
             android:name=".settingsActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/settings_title"/>
+            android:label="@string/settings_title"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

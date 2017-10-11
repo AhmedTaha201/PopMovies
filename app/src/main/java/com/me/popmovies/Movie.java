@@ -1,5 +1,8 @@
 package com.me.popmovies;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,6 +29,9 @@ public class Movie implements Serializable {
     //The movie genre IDs
     private String mGenres;
 
+    //The movie rating
+    private String mRated;
+
     // The variable with the story outline
     private String mSummary;
 
@@ -44,13 +50,14 @@ public class Movie implements Serializable {
 
     // The Constructor
     public Movie(String mTitle,String mMovieID, String mReleaseDate, String mDuration,
-                 String mRate,String mGenres, String mSummary, String mImageResourceId,String mBackDropResourceId, List<Trailer> mTrailers, String mReviews) {
+                 String mRate,String mGenres, String mRated, String mSummary, String mImageResourceId,String mBackDropResourceId, List<Trailer> mTrailers, String mReviews) {
         this.mTitle = mTitle;
         this.mMovieID = mMovieID;
         this.mReleaseDate = mReleaseDate;
         this.mDuration = mDuration;
         this.mRate = mRate;
         this.mGenres = mGenres;
+        this.mRated = mRated;
         this.mSummary = mSummary;
         this.mImageResourceId = mImageResourceId;
         this.mBackDropResourceId = mBackDropResourceId;
@@ -81,6 +88,8 @@ public class Movie implements Serializable {
 
     public String getmGenres() {return this.mGenres;}
 
+    public String getmRated() {return this.mRated;}
+
     public String getmSummary() {
         return mSummary;
     }
@@ -94,4 +103,8 @@ public class Movie implements Serializable {
     public String getmReviews() {return this.mReviews;}
 
     public String getmBackDropResourceId() {return this.mBackDropResourceId;}
+
+    public void setmRated(String mRated) {
+        this.mRated = mRated;
+    }
 }

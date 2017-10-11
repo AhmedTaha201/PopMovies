@@ -98,6 +98,7 @@ public class MovieRecyclerCursorAdapter extends RecyclerView.Adapter<MovieRecycl
                     mCursor.getString(mCursor.getColumnIndex(MoviesContract.COLUMN_DURATION)),
                     mCursor.getString(mCursor.getColumnIndex(MoviesContract.COLUMN_RATE)),
                     mCursor.getString(mCursor.getColumnIndex(MoviesContract.COLUMN_GENRES)),
+                    null,
                     mCursor.getString(mCursor.getColumnIndex(MoviesContract.COLUMN_OVERVIEW)),
                     mCursor.getString(mCursor.getColumnIndex(MoviesContract.COLUMN_POSTER_ID)),
                     null,

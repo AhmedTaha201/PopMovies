@@ -4,7 +4,6 @@ package com.me.popmovies;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -29,7 +28,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.me.popmovies.cloud.ImdbService;
 import com.me.popmovies.data.MoviesContract;
 import com.me.popmovies.data.MoviesDBHelper;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -51,6 +52,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 import static android.app.Activity.RESULT_OK;
 
 
@@ -69,6 +76,8 @@ public class MainFragment extends Fragment {
 
     MoviesDBHelper dbHelper;
     SQLiteDatabase db;
+
+    //internetReceiver receiver;
 
     String moviesList;
 
@@ -116,6 +125,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onStart() {
+        bar.setVisibility(View.VISIBLE);
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
         dbHelper = new MoviesDBHelper(getActivity());
         db = dbHelper.getReadableDatabase();
@@ -129,6 +139,7 @@ public class MainFragment extends Fragment {
             recyclerView.setAdapter(resultAdapter);
         } else {
             updateData();
+            bar.setVisibility(View.GONE);
         }
 
         if (-1 != position) {
@@ -150,18 +161,23 @@ public class MainFragment extends Fragment {
         }
 
         //Registering the receiver
-        internetReceiver receiver = new internetReceiver();
+        //Todo -- Activate the receiver
+/*
+        receiver = new internetReceiver();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         getActivity().registerReceiver(receiver, filter);
+*/
     }
 
     //Helper method to show erreo hints like no connection or no fav. movies
-    //case id is the number matching the case (0 is no connection, 1 is no API_KEY and 2 is no favourited movies
+    //case id is the number matching the case (0 is no connection, 1 is no API_KEY, 2 is no favourited movies and 3 is searching
     public static final int NO_INTENET_ID = 0;
     public static final int NO_API_ID = 1;
     public static final int NO_FAV_ID = 2;
     public static final int SEARCHING_ID = 3;
+    public static final int CLEAR = 100; /* To be used with show hint to ONLY clear the textview
+     and NOT TO be used with the clear adapter method*/
 
     public void showHint(int caseID) {
         //getting the progress bar and the no-internet text to show the text and hide the progress bar
@@ -220,6 +236,7 @@ public class MainFragment extends Fragment {
                                 + "&query=" + query;
 
                         new MoviesTask().execute(searchUrl);
+                        showHint(CLEAR);
                         return false;
                     } else {
                         Snackbar.make(rootView, getString(R.string.search_connect_internet), Snackbar.LENGTH_SHORT).show();
@@ -327,6 +344,7 @@ public class MainFragment extends Fragment {
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_DURATION)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_RATE)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_GENRES)),
+                                    null, /*Rating*/
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_OVERVIEW)),
                                     fav_movies_cursor.getString(fav_movies_cursor.getColumnIndex(MoviesContract.COLUMN_POSTER_ID)),
                                     null,
@@ -497,7 +515,7 @@ public class MainFragment extends Fragment {
     // ExtractMoviesListFromJson method extracts movies information from the JSON respone
     private List<Movie> ExtractMoviesListFromJson(String jsonResponse) {
 
-        List<Movie> movies = new ArrayList<Movie>();
+        final List<Movie> movies = new ArrayList<Movie>();
 
         String poster;
         String summary;
@@ -505,6 +523,7 @@ public class MainFragment extends Fragment {
         String title;
         String rate;
         String genres;
+        String imdb_id;
         String id;
         String runTime;
         String backPoster;
@@ -546,13 +565,46 @@ public class MainFragment extends Fragment {
                 //getting runtime
                 runTime = extractRunTimeFromJson(jsonResponseString);
 
+                //getting IMDB_id
+                imdb_id = extractIMDB_id_fromJsonResponse(jsonResponseString);
+
                 //getting trailers list
                 trailers = extractTrailersListFromJsonResponse(jsonResponseString);
 
                 //getting reviews text
                 reviews = extractReviewsFromJsonResponse(jsonResponseString);
 
-                movies.add(new Movie(title, id, releaseDate, runTime, rate, genres, summary, poster, backPoster, trailers, reviews));
+                //Getting
+                final Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("http://www.myapifilms.com/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+
+                final String[] rate_c = new String[1];
+
+                ImdbService service = retrofit.create(ImdbService.class);
+                Call<IMDBMovie> call = service.getIMDBData(imdb_id);
+                final int finalI = i;
+                call.enqueue(new Callback<IMDBMovie>() {
+                    @Override
+                    public void onResponse(Call<IMDBMovie> call, Response<IMDBMovie> response) {
+                        Toast.makeText(getActivity(), "GOT IMDB data", Toast.LENGTH_SHORT).show();
+                        IMDBMovie m = response.body();
+                        rate_c[0] = m.getRated();
+                        movies.get(finalI).setmRated(m.getRated());
+                    }
+
+                    @Override
+                    public void onFailure(Call<IMDBMovie> call, Throwable t) {
+                        // Toast.makeText(getActivity(), "Failed to fetch IMDB data", Toast.LENGTH_SHORT).show();
+                        Log.e(LOG_TAG, "Failed to fetch IMDB data");
+
+                    }
+
+                });
+
+                movies.add(new Movie(title, imdb_id, releaseDate, runTime, rate, genres, rate_c[0], summary,poster,backPoster
+                ,trailers, reviews));
 
             }
 
@@ -645,6 +697,39 @@ public class MainFragment extends Fragment {
         return reviews;
     }
 
+    //Helper Method to get Imdb_id
+    private String extractIMDB_id_fromJsonResponse(String jsonResponseString) {
+        String imdb_id = "";
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponseString);
+            imdb_id = jsonObject.getString("imdb_id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return imdb_id;
+
+    }
+
+    //Helper method to get the rest of the movie details from {OMDB API} which returns IMDB data
+    /*
+    * It has a daily limit of 2000 requests
+    * And it is a little bit retarded */
+    public static String getOMDBData(String jsonResponse) {
+        String rate_c = "";
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            JSONObject data = jsonObject.getJSONObject("data");
+            JSONArray movies = data.getJSONArray("movies");
+            JSONObject movie = (JSONObject) movies.get(0);
+
+            rate_c = movie.getString("rated");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return rate_c;
+    }
+
     //Helper method to check if there is internet connection or not
     public static boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -657,6 +742,7 @@ public class MainFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         dbHelper.close();
+//        getActivity().unregisterReceiver(receiver);
     }
 
     //Helper method to listen for movies preference change
